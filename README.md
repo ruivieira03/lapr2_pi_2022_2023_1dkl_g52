@@ -1,0 +1,2 @@
+# lapr2_pi_2022_2023_1dkl_g52
+ISEP LEI LAPR2 PI
