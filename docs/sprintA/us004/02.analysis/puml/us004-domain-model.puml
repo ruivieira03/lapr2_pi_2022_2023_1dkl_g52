@@ -1,0 +1,63 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+class Owner {
+
+}
+
+class Agent {
+
+}
+class PublishmentRequest{
+}
+
+class Property {
+
+}
+class Land{
+    Area in m^2
+    Location
+    Distance from city center
+    Photographs - minimun 1
+
+}
+class Apartment{
+    Same as Land
+    +Number of rooms
+    +Number of bedrooms
+    +Number of bathrooms
+    +Number of parking spaces
+    +Available equipment(central heating/air conditioning...)
+}
+class House{
+    Same for Apartments
+    ++Existence of a basement
+    ++Existance of a inhabitable loft
+    ++Sun exposure
+}
+
+'class User {
+'    name
+'    email
+'    password
+'}
+
+
+Owner "1" - "0..*" Property : has >
+Property "1"-"1" Land:can be >
+Property "1"--"1" Apartment : can be >
+Property "1"--"1" House : can be >
+Owner "1"--"0..*" PublishmentRequest: creats >
+Agent "1" - "0..*" Property : Publishes >
+PublishmentRequest "1"--"1"Agent : Evaluated by >
+
+@enduml

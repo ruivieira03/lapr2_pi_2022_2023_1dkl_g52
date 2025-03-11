@@ -1,0 +1,378 @@
+@startuml
+
+'repositories
+class Repositories {
+__
+-Repositories()
++ getInstance() : Repositories
++ getLocationsRepository()
++ getBranchesRepository()
++ getClientRepository()
++ getPropertySaleRepository()
++ getPropertySaleRequestRepositories()
++ getSystemAdministratorRepository()
+}
+
+class SystemAdministratorRepository{
+-SystemAdministrator
++createSystemAdministrator()
+}
+
+class PropertySaleRepository{
++ listProperties(String sortCriterion, int filterAttributes)
++ getMaxAttributes()
+}
+
+class LocationsRepository{
++ getStatesList()
++ createState(stateName, districtsNameList, citiesNameArray)
++ addState(State)
+- isValid(State)
+}
+
+class BranchesRepository {
+__
++ getAgentFromEmail(email)
++ getBrancheslist()
++ getStoresBranchList()
++getAgents(branch)
+}
+
+class ClientsRepository {
+-ArrayList Clients
++addClient(client)
++isValid(client)
++createClient(name,citizenCardNumber, taxNumber\n address, emailAddress, telephoneNumber, password)
+}
+
+class AuthenticationRepository{
++addUser(emailAddress,password,name)
+}
+
+class PropertySaleRequestRepository{
++createSalesResquest(Input Data)
++addPropertySalesRequest(PropertySalesRequest)
++isValid(PropertySalesRequest)
++equals(PropertySalesRequest)
+}
+
+
+'controllers
+
+class ListPropertiesController {
+-Repositories repositories
+    + listPropertiesController()
+    + listProperties(short sortCriterion)
+    + listProperties(short sortCriteria, PropertySaleRequest.TypesOfBusinesses propertyBusiness, Property.Type propertyType, int numberOfRooms)
+}
+
+class RegisterPropertySaleController{
+-Repositories repositories
+__
++ RegisterPropertySaleController()
++ getStatesList()
++ getDistrictList(state)
++ getCitiesList(district)
++ createPropertySale(typeOfBusiness, propertyType, \narea, distaceFromCityCenter, requestedPrice, state, \ndistrict, city, adress, photos, ownerEmailAdress, \ntypeOfComission, agentComission)
++ getAgentFromSession()
++ getClientFromEmail()
+}
+
+
+class RegistrationController{
++RegistrationController()
++createClient(name,citizenCardNumber, taxNumber\n address, emailAddress, telephoneNumber, password)
+}
+
+
+class SpecifyLocationsController {
+-Repositories repositories
+__
++ SpecifyLocationsController()
++ createState(stateName, districtsNameList, citiesNameArray)
+}
+
+class CreatePropertySaleRequestController {
+-Repositories repositories
++createSalesResquest(typeOfBusiness, propertyType,\n area, distanceFromcityCenter,\n requestedPrice, state, district, city, street, zipCode, photos, agent,\n numberOfBedRooms, numberOfBathrooms,\n parkingSpaces, availableEquipment, existanceOfInhabitableLoft\n existanceOfBasement, sunExposure)
++getStates()
++getDistricts(State)
++getCities(District)
++getBranches();
++getAgents(branch)
+}
+
+'UI
+class ListPropertiesUI {
+}
+
+class RegistrationUI{
+}
+
+class SpecifyLocationsUI {
+
+}
+
+class RegisterEmployeeUI {
+}
+
+class CreatePropertySaleRequestUI{
+}
+
+class RegisterPropertySaleUI{
+}
+
+'Domain
+'property
+class PropertySaleRequest{
+- int typeOfBusiness
+- float requestedPrice
++ SortByCity()
+}
+
+class RegisterEmployeeController{
+__
++ getStoresList()
++ BranchList()
++ createEmployee(name, passport card number, \ntax number, adress,email adress, telephone number,\nBranch Or Store, type of employee)
+}
+
+class PropertySale {
+- CommissionType typeOfCommission
+- double commission
+__
++ SortByPrice()
++ calculatePrice()
++ isValid()
++ equals(obj)
+}
+
+abstract Property {
+- float area
+- String street
+- String zipCode
+- float distanceFromCityCenter
+__
++ isValid()
++ toString()
++ equals(obj
+}
+
+abstract ResidentialProperty {
+- int numberOfBedrooms
+- int numberOfBathrooms
+- int numerOfParkingSpaces
+- String availableEquipment
++ equals(obj)
+}
+
+class Land {
++ equals(obj)
++ toString()
+}
+
+class Apartment {
++ toString()
+}
+
+class House {
+- boolean existanceOfBasement
+- boolean existanceOfInhabitableLoft
+- SunExposure sunExposure
++ equals(obj)
++ toString()
+}
+
+'locations
+class State {
++ getDistricts()
++ equals(obj)
++ isValid()
+}
+
+
+class District {
++ getCities()
++ isValid()
+}
+
+class City {
+}
+
+class Location {
+- String name
+- List<Location> locations
+__
++ isValid()
+- isNameValid()
++ toString()
++ compareTo()
+}
+
+'store and employees
+
+class Branch {
+- List<Store> stores
+- NetworkManager networkManager
+__
++ getAgentFromEmail(email)
++ createStore()
++ createNetworkManager()
++ addNetworkManager(networkManager)
++ isNetworkManagerValid(networkManager)
+}
+
+class Store {
+- List<Agent> agents
+- StoreManager storeManager
+__
++ getStoresBranchList()
++ getStoresList()
++ creatAgent(name,passportNumber,taxNumber,address,email,phoneNumber)
++ addAgent(agent)
++ getAgentFromEmail(email)
++ isAgentValid(agent)
++ createStoreManager(name,passportNumber,taxNumber,address,email,phoneNumber)
++ addStoreManager(storeManager)
++ isStoreManagerValid(storeManager);
+}
+
+
+class Employee {
+- String name
+- int passportCardNumber
+- int taxNumber
+- String Adress
+- Email email
+- int phoneNumber
++ equals(obj)
++ isValid()
+}
+
+class Agent {
+__
++equals(obj)
++hasEmail(email);
+}
+
+
+
+class NetworkManager {
++equals(obj)
+}
+
+class SystemAdministrator {
++equals(obj)
+}
+
+
+class StoreManager {
++equals(obj)
+}
+
+
+
+'Session
+class AplicationSession{
+__
++ static getInstance()
++ get CurrentSession()
+}
+
+class UserSession{
+__
++ getUserId()
+}
+
+class AuthFacade{
++addUser(emailAddress,password,name)
+}
+
+
+'client
+class Client {
+    - name
+    - emailAddress
+    -telephoneNumber
+    - citizenCardNumber
+    - phone
+    -taxNumber
+    -address
+    +hasEmail(String)
+    +hasEmail(Email)
+    +isValid()
+    +equals(obj)
+
+}
+
+class Owner {
+
+}
+
+'-------------------------------
+
+'UI TO Controller
+ListPropertiesUI .> ListPropertiesController
+RegisterPropertySaleUI  .right> RegisterPropertySaleController
+RegisterEmployeeUI .> RegisterEmployeeController
+CreatePropertySaleRequestUI .> CreatePropertySaleRequestController
+SpecifyLocationsUI .> SpecifyLocationsController
+RegistrationUI .> RegistrationController
+
+
+'repositories
+Repositories --> Repositories : instance
+Repositories --> "1" LocationsRepository
+Repositories --> "1" BranchesRepository
+Repositories --> "1" PropertySaleRepository
+Repositories --> "1" PropertySaleRequestRepository
+Repositories --> "1" ClientsRepository
+Repositories --> "1" AuthenticationRepository
+Repositories --> "1" SystemAdministratorRepository
+'PropertySale
+PropertySaleRepository --> "0..*" PropertySale
+PropertySale --|> PropertySaleRequest
+PropertySaleRequestRepository --> "0..*" PropertySaleRequest
+
+PropertySaleRequest --o "1" Agent
+
+'Property
+Property --o Owner
+PropertySaleRequest --> "1" Property
+Land --|> Property
+ResidentialProperty --|> Property
+Apartment --|> ResidentialProperty
+House --|> ResidentialProperty
+
+Property --o "1" State
+Property --o "1" District
+Property --o "1" City
+
+'locations
+LocationsRepository --> "0..*" State
+
+State --> "1..*" District
+
+District --> "1..*" City
+State --|> Location
+District --|> Location
+City --|> Location
+
+'branches
+BranchesRepository --> "0..*" Branch
+Branch --> "0..*" Store
+Branch --> "0..1" NetworkManager
+Store --> "0..1" StoreManager
+Store --> "0..*" Agent
+
+'client
+ClientsRepository --> "0..*" Client
+Owner --|> Client
+
+'Emplyoee
+SystemAdministrator --|> Employee
+NetworkManager --|> Employee
+Agent --|> Employee
+StoreManager --|> Employee
+SystemAdministratorRepository --> SystemAdministrator
+@enduml

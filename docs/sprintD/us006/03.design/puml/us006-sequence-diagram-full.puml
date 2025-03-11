@@ -1,0 +1,146 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "SystemAdministrator" as Admin
+participant ":SpecifyingLocationsUI" as UI
+participant "specifyingLocationsController\n:SpecifyingLocationsController" as Controller
+participant ":Repositories" as Repositories
+participant "rep\n:Repositories" as rep
+participant "locatiosRepository\n:LocationsRepository" as locRep
+participant "state\n:State" as State
+participant "district\n:District" as District
+participant "city\n:City" as City
+
+activate Admin
+
+    Admin -> UI : requests to define a new State
+    activate UI
+
+        UI -> Controller** : create()
+        activate Controller
+
+            Controller -> Repositories : getInstance()
+            activate Repositories
+
+                Repositories --> Controller : repositories
+            deactivate Repositories
+
+        deactivate Controller
+
+        UI --> Admin : requests data
+    deactivate UI
+
+    Admin -> UI : types data(stateName)
+    activate UI
+
+        UI --> Admin : requests data
+    deactivate UI
+
+    Admin -> UI : types data(one more district names)
+
+    loop for each districtName
+        activate UI
+
+            UI --> Admin : requests data
+        deactivate UI
+
+        Admin -> UI : types data(one or more city names)
+        activate UI
+    end
+
+        UI -> Controller : createState(stateName, \ndistrictsNameList, citiesNameArray)
+        activate Controller
+
+            Controller -> rep : getLocationsRepository()
+            activate rep
+
+                rep --> Controller : locationsRepository
+            deactivate rep
+
+            Controller -> locRep : createState(stateName, \ndistrictsNameList, citiesNameArray)
+            activate locRep
+
+                locRep -> State** : create(stateName, districtsNameList, citiesNameArray)
+                activate State
+
+                    loop for each districtName
+                        State -> District** : create(districtName, citiesNameList)
+                        activate District
+
+                            loop for each cityName
+                                District -> City** : create(CityName)
+
+                            end
+                        deactivate District
+                    end
+                deactivate State
+
+                locRep -> locRep : addState(State)
+                activate locRep
+                    locRep -> State : isValid()
+                    activate State
+
+                        State -> State : isNameValid()
+                        activate State
+
+                            State --> State : true/false
+                        deactivate State
+
+                        loop for each district
+                            State -> District : isValid()
+                            activate District
+
+                                District -> District : isNameValid()
+                                activate District
+
+                                    District --> District : true/false
+                                deactivate District
+
+                                loop for each City
+                                    District -> City : isValid()
+                                    activate City
+
+                                        City -> City : isNameValid()
+                                        activate City
+
+                                            City --> City : true/false
+                                        deactivate City
+
+                                        City --> District : true/false
+                                    deactivate City
+                                end
+
+                                District --> State : true/false
+                            deactivate District
+                        end
+                    State --> locRep : true/false
+                deactivate State
+
+                locRep -> locRep : isValid(State)
+                activate locRep
+
+                    locRep -> locRep : equals()
+                    activate locRep
+
+                        locRep --> locRep : true/false
+                    deactivate locRep
+
+                    locRep --> locRep : true/false
+                deactivate locRep
+
+                locRep --> locRep : true/false
+            deactivate locRep
+
+            locRep --> Controller : true/false
+        deactivate locRep
+
+        Controller --> UI : true/false
+    deactivate Controller
+
+    UI --> Admin : (In)Success of operation
+deactivate Admin
+@enduml

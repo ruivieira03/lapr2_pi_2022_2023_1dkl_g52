@@ -1,0 +1,28 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title US015 - List booking requests
+
+autonumber
+
+actor Agent as ag
+participant ":System" as sys
+
+activate ag
+ag -> sys : asks to list all booking requests
+activate sys
+sys --> ag : asks for begin date
+deactivate sys
+ag --> sys : provides begin date
+activate sys
+sys --> ag : asks for end date
+deactivate sys
+ag --> sys : provides end date
+activate sys
+sys --> ag : provides list of booking requests for the given period
+deactivate sys
+deactivate ag
+
+
+
+@enduml

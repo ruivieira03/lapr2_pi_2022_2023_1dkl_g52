@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.ipp.isep.dei.esoft.project.ui.gui.ChooseNumberOfStoresGUI">
+   <children>
+      <Label layoutX="52.0" layoutY="43.0" text="Select the number of stores to split beetwen the lists" textFill="#0022bc">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </Label>
+      <TextField fx:id="numberOFStores" editable="false" layoutX="364.0" layoutY="148.0" prefHeight="26.0" prefWidth="97.0" />
+      <Label layoutX="139.0" layoutY="151.0" text="Current availabel number of stores">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <TextField fx:id="insertedNumber" layoutX="364.0" layoutY="197.0" prefHeight="26.0" prefWidth="97.0" promptText="insert number" />
+      <Label layoutX="132.0" layoutY="200.0" text="Number of stores that will make part">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="alert" layoutX="42.0" layoutY="271.0" text="Inserted number cant be superior than the current number of availabel stores!!" textFill="RED" visible="false">
+         <font>
+            <Font name="System Bold Italic" size="14.0" />
+         </font>
+      </Label>
+      <Button fx:id="buttonBack" layoutX="42.0" layoutY="340.0" mnemonicParsing="false" onMouseClicked="#goBack" text="back" />
+      <Button fx:id="submitButton" layoutX="462.0" layoutY="340.0" mnemonicParsing="false" onMouseClicked="#SubmitNumber" text="Submit" />
+   </children>
+</AnchorPane>

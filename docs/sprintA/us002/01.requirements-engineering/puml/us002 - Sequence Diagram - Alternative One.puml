@@ -1,0 +1,85 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD)
+
+autonumber
+
+actor "Property Owner" as Owner
+actor "Agent" as Agent
+participant ":System" as System
+
+activate Owner
+
+    Owner -> Agent : contacts agent to list a property for sale
+    activate Agent
+
+        Agent -> System : asks to create a new property sale
+        activate System
+
+            System --> Agent : requests data
+        deactivate System
+
+        Agent -> System : selects data(type of type, type of business)
+        activate System
+
+            System --> Agent : requests data
+        deactivate System
+
+        Agent -> System : types data(area, location, distance from city center, requesed price)
+        activate System
+
+
+        alt Property Type == House or Apartment
+
+                System --> Agent : requests data
+            deactivate System
+
+            Agent -> System : types requested data(number of bedrooms, bathrooms, parking spaces and available equipment)
+            activate System
+
+                alt Property Type == House
+
+                        System --> Agent : requests data
+                    deactivate System
+
+                    Agent -> System : selects data(existace of loft, basement and sun exposure)
+                    activate System
+
+                end
+
+        end
+
+            System --> Agent :requests data
+        deactivate System
+
+        Agent -> System : import's property photos
+        activate System
+
+            System --> Agent : requests data
+        deactivate System
+
+        Agent -> System : types data(owner's name, citizen card number, tax number, adress, email, telephone)
+        activate System
+
+            System --> Agent : requests data
+        deactivate System
+
+        Agent -> System : selects data(type of comission)
+        activate System
+
+            System --> Agent : requests data
+        deactivate System
+
+        Agent -> System : types data(agent comissision)
+        activate System
+
+            System --> Agent : (In)Sucesses of the operation
+        deactivate System
+
+        Agent --> Owner : (In)Sucesses
+    deactivate Agent
+@enduml

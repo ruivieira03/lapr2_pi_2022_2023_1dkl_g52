@@ -1,0 +1,35 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD)
+
+autonumber
+
+actor "Unregistered user" as US
+participant ":System" as System
+
+activate US
+
+    US -> System : selects to display the listed properties.
+    activate System
+
+    System --> US : display the listed properties by most recently added,\nthe existing options for the type of business\n (renting or buying), the type of property and the number of rooms\n and the sort options available
+    deactivate System
+
+    alt select at least one of the existing options
+
+    US -> System : selects data.
+    activate System
+
+        System --> US : display the listed properties matching the data selected.
+    deactivate System
+
+
+
+    end
+
+
+
+@enduml

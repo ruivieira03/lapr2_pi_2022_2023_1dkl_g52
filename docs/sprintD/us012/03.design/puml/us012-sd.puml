@@ -1,0 +1,70 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+title US012 - Import Legacy Data
+
+actor "Administrator" as adm
+participant ":ImportDataUI" as ui
+participant ":ImportDataController" as ctrl
+participant ":Repositories" as repo
+participant ":FileEnum" as fenum
+participant ":FileReader" as freader
+participant ":EmployeeRepository" as erepo
+participant ":StoreRepository" as srepo
+participant ":OrganizationRepository" as orepo
+participant ":AuthenticationRepository" as authrepo
+participant ":PropertyRepository" as prepo
+
+activate adm
+adm -> ui : asks to import legacy data
+activate ui
+ui -> ctrl** : create
+    activate ctrl
+        ctrl -> repo : repo = getInstance()
+        activate repo
+        deactivate repo
+
+        ctrl -> repo : employeeRepo = getEmployeeRepository()
+        activate repo
+        deactivate repo
+
+        ctrl -> repo : storeRepo = getStoreRepository()
+        activate repo
+        deactivate repo
+
+        ctrl -> repo : organizationRepo = getOrganizationRepository()
+        activate repo
+        deactivate repo
+
+        ctrl -> repo : propertyRepo = getPropertyRepository()
+        activate repo
+        deactivate repo
+
+        ctrl -> fenum : fileEnum = getClasses()
+        activate fenum
+        deactivate fenum
+
+        ctrl --> ui : fileEnum
+
+    deactivate ctrl
+
+adm <-- ui : shows file list to import to chose
+deactivate ui
+adm -> ui : selects file to import
+activate ui
+adm <-- ui : asks for file path
+deactivate ui
+adm -> ui : provides file path
+activate ui
+adm <-- ui : asks to confirm file
+deactivate ui
+adm -> ui : confirms file
+activate ui
+adm <-- ui : informs of operation (in)success
+
+
+
+
+@enduml

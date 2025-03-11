@@ -1,0 +1,90 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+'title Domain Model
+
+'class Platform {
+'  -description
+'}
+
+class User {
+name
+emailAddress
+telephone number
+citizenCardNumber
+taxNumber
+address
+}
+
+class Employee {
+agency
+role
+}
+
+
+class Agent {
+
+}
+
+class PropertySale {
+comission
+typeOfComission
+}
+
+class PurchaseSaleRequest {
+typeOfBusiness
+requestedPrice
+}
+
+class Client {
+
+}
+
+class Property {
+area
+location
+distanceFromCityCenter
+photographs
+}
+
+class State {
+nameState
+}
+
+class District {
+nameDistrict
+}
+
+class City {
+nameCity
+}
+
+
+User <|-- Client
+User <|-- Employee
+
+Client -- PurchaseSaleRequest : requests >
+
+Employee <|--down  Agent
+
+Agent .. PropertySale : registers >
+Agent .. PurchaseSaleRequest : aproves >
+PurchaseSaleRequest ..up Agent : refers to >
+
+PurchaseSaleRequest "1" -- "1" Property : contains >
+
+Property --left State : contains >
+Property --left District : contains >
+City -- Property : contains <
+
+PurchaseSaleRequest <|--left PropertySale
+@enduml

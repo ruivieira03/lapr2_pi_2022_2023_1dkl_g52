@@ -1,0 +1,53 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD)
+
+autonumber
+
+actor "Unregistered user" as Employee
+participant ":System" as System
+
+activate Employee
+
+    Employee -> System : asks to display the listed properties.
+    activate System
+
+        System --> Employee : ask to select type of business (renting or buying), \nthe type of property and the number of rooms.
+    deactivate System
+
+    alt selects one of each requested data
+
+    Employee -> System : selects requested data.
+    activate System
+
+        System --> Employee : ask if wants to sort by price, by city or by state.
+    deactivate System
+
+    Employee -> System : selects one.
+    activate System
+
+        System --> Employee : shows the list of the sorted properties matching the selected data.
+    deactivate System
+
+       else selects nothing
+
+    Employee -> System : selects nothing.
+        activate System
+
+            System --> Employee : ask if wants to sort by price, by city or by state.
+        deactivate System
+
+        Employee -> System : selects one.
+        activate System
+
+            System --> Employee : shows the list of all properties that are on sale or on renting sorted.
+        deactivate System
+
+    end
+
+
+
+@enduml

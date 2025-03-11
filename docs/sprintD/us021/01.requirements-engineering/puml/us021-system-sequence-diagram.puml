@@ -1,0 +1,30 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - Alternative One
+
+autonumber
+
+actor "Agent" as Agent
+participant ":System" as System
+
+activate Agent
+
+        System --> Agent : requests opinion about the business
+    activate System
+
+    Agent -> System : types opinion (200 characters)
+    deactivate System
+
+        System --> Agent : shows classification scale asks to select one
+    activate System
+
+    Agent -> System : selects a classification scale
+    deactivate System
+
+    System --> Agent : displays operation success
+    activate System
+
+@enduml

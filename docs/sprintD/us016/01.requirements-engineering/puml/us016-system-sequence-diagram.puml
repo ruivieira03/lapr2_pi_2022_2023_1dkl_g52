@@ -1,0 +1,52 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram
+
+autonumber
+
+actor "Agent" as A
+participant ":System" as S
+actor "Client" as C
+
+activate A
+
+A -> S : selects to display the booking requests
+activate S
+
+S --> A : displays all booking requests assigned to that agent
+
+opt selects one request
+
+A -> S : selects one request
+
+S --> A : Requests to select to accept or decline
+
+alt selects to decline
+A -> S : selects to decline
+
+S --> A : request the justification for the refusal
+
+A -> S : Types the justification
+
+else selects to accept
+
+A -> S : selects to accept
+
+end else
+
+activate C
+
+S --> C : Email the client
+
+S --> A : In(Success) of operation
+
+end opt
+
+
+
+
+
+@enduml

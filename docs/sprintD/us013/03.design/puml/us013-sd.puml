@@ -1,0 +1,39 @@
+@startuml
+title List All Employees
+
+actor NetworkManager
+
+activate NetworkManager
+
+    NetworkManager -> ListEmployeeUI : list all employees
+
+        activate ListEmployeeUI
+
+            ListEmployeeUI -> ListEmployeeController : listAllEmployees()
+
+                activate ListEmployeeController
+
+                    ListEmployeeController -> StoreRepository : getSortedStoreList()
+
+                        activate StoreRepository
+
+                            StoreRepository -> Store : getPropertyCountByStore()
+
+                            StoreRepository -> StoreDTO : mapper.toDTO()
+
+                            StoreRepository -> AgentDTO : getAgentListFromStore()
+
+                            StoreRepository -> ListEmployeeController : Sorted Store List
+
+                        deactivate StoreRepository
+
+                    ListEmployeeController -> ListEmployeeUI : List of All employees, grouped by store
+
+                deactivate ListEmployeeController
+
+            ListEmployeeUI -> NetworkManager : Employees List
+
+        deactivate ListEmployeeUI
+
+deactivate NetworkManager
+@enduml

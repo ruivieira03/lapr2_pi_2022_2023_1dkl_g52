@@ -1,0 +1,55 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+
+class PurchaseRequestController {
++createPurchaseRequest(propertySale,orderAmount)
++getClient()
+}
+
+class PurchaseRequestUI{
+}
+
+class Repositories {
+
++getPurchaseRequestRepository()
+}
+class AplicationSession{
+
++getCurrentSession()
+}
+class UserSession{
++getUserID()
+}
+
+class PurchaseRequestRepositories{
++createPurchaseRequest(propertySale,orderAmount,client)
++addPurchaseRequest()
++isValid(purchaseRequest)
++equals(purchaseRequest)
+}
+
+class PurchaseRequest{
+-PropertySale
+-Client
+-orderAmount
+}
+
+
+
+
+
+
+
+PurchaseRequestUI .> PurchaseRequestController
+PurchaseRequestController ..> Repositories : repositories
+Repositories  --> "1" PurchaseRequestRepositories
+PurchaseRequestController ..> PurchaseRequestRepositories : repositories
+PurchaseRequestController ..> AplicationSession
+AplicationSession -> AplicationSession : instance
+AplicationSession --> "1" UserSession
+Repositories --> Repositories : instance
+
+PurchaseRequest "0..*"<- PurchaseRequestRepositories
+
+@enduml

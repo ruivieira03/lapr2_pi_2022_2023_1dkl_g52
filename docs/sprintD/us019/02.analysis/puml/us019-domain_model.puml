@@ -1,0 +1,63 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+hide circle
+hide methods
+
+title Domain Model - US019
+
+class NetworkManager {
+}
+
+class Employee {
+ role
+}
+
+class User {
+  name
+  passportNumber
+  phoneNumber
+  taxNumber
+  address
+  email
+}
+
+class Store {
+ agents
+ storeManager
+ id
+ name
+ email
+ telephoneNumber
+ address
+ zipCode
+ propertyCount
+}
+
+class State {
+    state
+}
+
+class District {
+    district
+}
+
+class City {
+    city
+}
+
+
+User <|-- Employee
+
+Employee <|-- NetworkManager
+
+Store "1" -- "1" District : has >
+Store "1" -- "1" City : has >
+Store "1" -- "1" State : has >
+
+NetworkManager "1" .. "1" Store : manages >
+
+@enduml

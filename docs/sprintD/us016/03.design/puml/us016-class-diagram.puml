@@ -1,0 +1,186 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+
+class ReviewVisitRequestController {
++getVisitRequestListFromAgent()
++getAgentFromSession()
++sendEmailMessageToClient(visitRequestDTO.client, messageDTO)
++addAcceptedRequests(VisitRequestDTO visitRequestDTO)
++addDeclinedVisitRequest(VisitRequestDTO visitRequestDTO)
++sendResponseToClient(ClientDTO clientDTO, VisitRequestResponseDTO visitRequestResponseDTO)
+}
+
+class ReviewVisitRequestUI{
+}
+
+class Repositories {
++getClientRepository()
++getVisitRequestRepository()
++getStoreRepository()
+}
+class AplicationSession{
+
++getCurrentSession()
+}
+class UserSession{
++getUserID()
+}
+
+class VisitRequestRepositories{
++getVisitRequestListFromAgent(AgentDTO agentDTO)
++addAcceptedVisitRequest(VisitRequestDTO visitRequestDTO)
++addDeclinedVisitRequest(VisitRequestDTO visitRequestDTO)
+}
+
+class ClientRepository{
++notifyClient(client.get(), messageDTO)
+}
+
+class StoreRepository{
++getAgentFromEmail(agentDTO.email)
+}
+
+class Agent{
+}
+
+class Client{
+}
+
+class VisitRequest{
++ int id
+- PropertySale propertySale
+- LocalDateTime visitStart
+- LocalDateTime visitEnd
+}
+
+class Client{
+- Notification notification
+}
+
+class Notification{
+- int id_counter
+}
+
+class Message {
+- int id
+- LocalDateTime date
+- String message
+}
+
+class User{
+ - String name
+ - int passportNumber
+ - String phoneNumber
+ - String taxNumber
+ - String address
+ - String email
+}
+
+class PropertySaleRequest{
+- int typeOfBusiness
+- float requestedPrice
+}
+
+class PropertySale {
+- int typeOfComission
+- float commission
+}
+
+abstract class Property {
+- float area
+- String street
+- String zipCode
+- float distanceFromCityCenter
+}
+
+class Land {
+
+}
+
+class City{
+}
+
+class State{
+- String name
+}
+
+class District{
+
+}
+
+abstract class ResidentialProperty {
+- numberOfBedrooms
+- numberOfBathrooms
+- numerOfParkingSpaces
+- availableEquipment
+}
+
+class Apartment {
+}
+
+
+class House {
+- existanceOfBasement
+- existanceOfInhabitableLoft
+- sunExposure
+}
+
+class Store {
+
+}
+
+class NetworkManager{
+}
+
+
+
+
+ReviewVisitRequestUI .> ReviewVisitRequestController
+ReviewVisitRequestController ..> Repositories : repositories
+Repositories  --> "1" VisitRequestRepositories
+Repositories --> "1" ClientRepository
+Repositories --> "1" StoreRepository
+ReviewVisitRequestController ..> VisitRequestRepositories : repositories
+ReviewVisitRequestController ..> AplicationSession
+AplicationSession -> AplicationSession : instance
+AplicationSession --> "1" UserSession
+Repositories --> Repositories : instance
+VisitRequest --> "1" Client
+
+VisitRequest "0..*"<-- VisitRequestRepositories
+Client --> "1" Notification
+Notification --> "0..*" Message
+VisitRequest --> "1" Message
+VisitRequest --> "1" PropertySale
+
+
+ResidentialProperty --up|> Property
+Land --up|> Property
+Apartment --up|> ResidentialProperty
+House --up|> ResidentialProperty
+
+Property--> "1" State
+State --> "1..*" District
+District --> "1..*" City
+
+PropertySale --|> PropertySaleRequest
+
+PropertySaleRequest --> "1" Property
+
+Message --> "1" User : author
+
+ClientRepository --> "0..*" Client
+Client --|> User
+
+
+StoreRepository --> "0..*" Store
+StoreRepository --> "1" NetworkManager
+
+Store --> "1" StoreManager
+Store --> "0..*" Agent
+StoreManager --|> User
+Agent --|> User
+
+
+@enduml

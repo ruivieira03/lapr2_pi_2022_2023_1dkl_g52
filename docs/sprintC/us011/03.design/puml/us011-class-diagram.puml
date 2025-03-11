@@ -1,0 +1,113 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+'skinparam linetype orto
+
+skinparam classAttributeIconSize 0
+
+'left to right direction
+
+class User {
+    - name : String
+    - emailAddress : String
+    - telephoneNumber : int
+    - citizenCardNumber : int
+    - taxNumber : int
+    - address : Address
+}
+
+class Store {
+
+}
+
+class Employee {
+    - agency : String
+    - role : String
+}
+
+class Agent {
+
+}
+
+class Client {
+
+}
+
+class PurchaseRequest {
+    - typeOfBusiness : String
+    - requestedPrice : float
+
+    + sortByPriceComparator()
+}
+
+class PropertySale {
+    - commission : float
+    - typeOfCommission : String
+
+    + removePropertySaleRequest()
+    + getPropertiesListed()
+}
+
+class PurchaseRequestRepository {
+
+    + listProperties();
+    + listPurchaseRequests()
+    + getPurchaseRequestRepository()
+}
+
+class Repositories {
+    - Repositories()
+    + getInstance() : Repositories
+    + getPurchaseRequestRepository()
+}
+
+class OrderDecision {
+    + orderDecision : String
+}
+
+class Message {
+    + sendEmailToClient(decision)
+}
+
+class PurchaseRequestController {
+    + PurchaseRequestController(propertyRequestRepository)
+    + getPropertiesListed()
+    + listProperties()
+}
+
+class PurchaseRequestUI {
+}
+
+User <|-- Employee
+User <|-- Client
+
+Employee <|-- Agent
+
+Agent -> OrderDecision : makes >
+
+Repositories --> Repositories : instance
+
+PurchaseRequestUI -> PurchaseRequestController
+
+PurchaseRequestController ..> PurchaseRequest
+
+PurchaseRequest -> PropertySale
+PurchaseRequest "1" --> "*" PurchaseRequestRepository : has >
+
+PurchaseRequestController .> Repositories : repositories
+
+Repositories -> "1" PurchaseRequestRepository
+
+PurchaseRequestRepository "1" --> "*" PropertySale
+
+PropertySale --> Agent : sees
+
+Employee "*" -- "1" Store : works at >
+
+Message .. Client : is sent >
+
+Message -- OrderDecision : has >
+
+@enduml

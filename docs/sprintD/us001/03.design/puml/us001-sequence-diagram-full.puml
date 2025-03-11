@@ -1,0 +1,196 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Unregistered\nUser" as US
+participant ":PropertySaleListMenu()" as UI
+participant ":ListPropertiesController" as CTRL
+participant ":Repositories" as RepositorySingleton
+participant "repositories\n:Repositories" as REP
+participant "propertySaleRepository:\n:PropertySaleRepository" as PropertySaleRepository
+participant ":Utils" as UTILS
+
+activate US
+
+        US -> UI : selects to display the listed properties
+
+        activate UI
+
+            UI -> CTRL** : create
+
+            UI -> CTRL : getSortFilterOptions()
+            activate CTRL
+
+            CTRL --> UI : sortFilterOptions
+            deactivate CTRL
+
+            UI -> CTRL : ListProperties(sortFilterOptions)
+            activate CTRL
+
+                CTRL -> RepositorySingleton : getInstance()
+                activate RepositorySingleton
+
+                    RepositorySingleton --> CTRL: repositories
+                deactivate RepositorySingleton
+
+                CTRL -> RepositorySingleton: getPropertySaleRepository()
+                activate RepositorySingleton
+
+                    RepositorySingleton -> REP: getPropertySaleRepository()
+                    activate REP
+
+                    REP --> RepositorySingleton: PropertySaleRepository
+                deactivate REP
+
+                RepositorySingleton --> CTRL: PropertySaleRepository
+                deactivate RepositorySingleton
+
+                            CTRL -> PropertySaleRepository : listProperties(sortFilterOptions)
+                            activate PropertySaleRepository
+
+                            PropertySaleRepository --> CTRL : propertyList
+                            deactivate PropertySaleRepository
+
+                            CTRL --> UI : propertyList
+
+                            deactivate CTRL
+
+                            UI -> UTILS : showPropertySalelist(propertyList, getPrompt(sortFilterOptions))
+                            activate UTILS
+
+                            UTILS --> UI : display the listed properties sorted by most recently\nadded and the options sort, filter and exit
+                            deactivate UTILS
+
+
+                        UI --> US : display the listed properties sorted by most recently\n added and the options sort, filter and exit
+                        deactivate UI
+
+loop until user selects to exit
+
+
+                        opt selects to filter
+
+
+
+
+            US -> UI : Selects data
+            activate UI
+
+            UI --> US : display the property business types (rent or sell)
+
+            US -> UI : selects one or not
+
+            UI --> US : display the property types (land, apartment or house)
+
+            US -> UI : selects one or not
+
+            UI --> US : requests to type the number of rooms
+
+            US -> UI : types requested data
+
+            UI -> CTRL : ListProperties(sortFilterOptions)
+                        activate CTRL
+
+                            CTRL -> RepositorySingleton : getInstance()
+                            activate RepositorySingleton
+
+                                RepositorySingleton --> CTRL: repositories
+                            deactivate RepositorySingleton
+
+                            CTRL -> RepositorySingleton: getPropertySaleRepository()
+                            activate RepositorySingleton
+
+                                RepositorySingleton -> REP: getPropertySaleRepository()
+                                activate REP
+
+                                REP --> RepositorySingleton: PropertySaleRepository
+                            deactivate REP
+
+                            RepositorySingleton --> CTRL: PropertySaleRepository
+                            deactivate RepositorySingleton
+
+                                        CTRL -> PropertySaleRepository : listProperties(sortFilterOptions)
+                                        activate PropertySaleRepository
+
+                                        PropertySaleRepository --> CTRL : propertyList
+                                        deactivate PropertySaleRepository
+
+                                        CTRL --> UI : propertyList
+
+                                        deactivate CTRL
+
+                                        UI -> UTILS : showPropertySalelist(propertyList, getPrompt(sortFilterOptions))
+                                        activate UTILS
+
+                                        UTILS --> UI : display the listed properties sorted by most recently\nadded, filttered as the user selected and the options sort, filter and exit
+                                        deactivate UTILS
+
+
+                                    UI --> US : display the listed properties sorted by most recently\nadded, filttered as the user selected and the options sort, filter and exit
+                                    deactivate UI
+
+            end
+
+
+
+ opt selects to sort
+
+ US -> UI : selects data
+  activate UI
+
+ UI --> US : display the sort options (by price, by city or by most recently added)
+
+ US -> UI : selects one or not
+ UI -> CTRL : ListProperties(short sortCriteria)
+
+UI -> CTRL : ListProperties(sortFilterOptions)
+                        activate CTRL
+
+                            CTRL -> RepositorySingleton : getInstance()
+                            activate RepositorySingleton
+
+                                RepositorySingleton --> CTRL: repositories
+                            deactivate RepositorySingleton
+
+                            CTRL -> RepositorySingleton: getPropertySaleRepository()
+                            activate RepositorySingleton
+
+                                RepositorySingleton -> REP: getPropertySaleRepository()
+                                activate REP
+
+                                REP --> RepositorySingleton: PropertySaleRepository
+                            deactivate REP
+
+                            RepositorySingleton --> CTRL: PropertySaleRepository
+                            deactivate RepositorySingleton
+
+                                        CTRL -> PropertySaleRepository : listProperties(sortFilterOptions)
+                                        activate PropertySaleRepository
+
+                                        PropertySaleRepository --> CTRL : propertyList
+                                        deactivate PropertySaleRepository
+
+                                        CTRL --> UI : propertyList
+
+                                        deactivate CTRL
+
+                                        UI -> UTILS : showPropertySalelist(propertyList, getPrompt(sortFilterOptions))
+                                        activate UTILS
+
+                                        UTILS --> UI : display the listed properties sorted \nas the user selected and the options sort, filter and exit
+                                        deactivate UTILS
+
+
+                                    UI --> US : display the listed properties sorted \nas the user selected and the options sort, filter and exit
+                                    deactivate UI
+
+
+ end
+
+            deactivate US
+            end
+@enduml

@@ -1,0 +1,30 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram
+
+autonumber
+
+actor "Client" as C
+participant ":System" as S
+
+activate C
+
+C -> S : selects Property
+activate S
+
+S --> C : requests order amount
+
+C -> S : Gives order amount
+
+S --> C : (in)Success of Operation
+
+
+
+
+
+
+
+@enduml

@@ -1,0 +1,83 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+'title Domain Model
+
+class Employee {
+    role
+    agency
+}
+
+class User {
+name
+emailAddress
+telephone number
+citizenCardNumber
+taxNumber
+address
+}
+
+
+class NetworkManager{
+
+}
+
+class PropertySold {
+paidAmount
+buyer
+purchaseData
+}
+
+class PropertySale{
+    dateAnnounceRequest
+    commission
+    typeOfCommission
+    price
+    contractDuration
+}
+
+class Property{
+    area
+    location
+    distanceFromCityCenter
+    photographs
+}
+
+class ResidentialProperty{
+numberOfBedrooms
+numberOfBathrooms
+numberOfParkingSpaces
+availableEquipment
+}
+
+class House{
+sunExposure
+existenceOfBasement
+existenceOfInhabitableLoft
+}
+
+
+User "*"--"1" Employee: is a <
+
+Employee -- NetworkManager
+
+ResidentialProperty <|-- House
+Property <|-- ResidentialProperty
+
+PropertySale"1" -- "1" Property: contains >
+NetworkManager"1" -- "0..*" PropertySold: sorts deals >
+
+PropertySale <|-- PropertySold
+
+
+
+@enduml

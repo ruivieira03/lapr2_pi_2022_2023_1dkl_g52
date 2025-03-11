@@ -1,0 +1,42 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram
+
+autonumber
+
+actor "Owner" as Owner
+participant ":System" as System
+actor "Agent" as Agent
+
+activate Owner
+Owner -> System : Asks to start a request
+deactivate Owner
+activate System
+
+System-->Owner : Asks to select de property and the agent.
+deactivate System
+activate Owner
+
+Owner -> System : Selects requested data.
+deactivate Owner
+activate System
+
+System -> Agent : Sends the request for verification and \neventual publication
+deactivate System
+activate Agent
+
+Agent --> System : Request publicated
+deactivate Agent
+activate System
+
+System --> Owner : Sends notification and displays the publication status.
+deactivate System
+activate Owner
+
+
+
+
+@enduml

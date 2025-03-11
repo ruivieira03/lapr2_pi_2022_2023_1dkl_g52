@@ -1,0 +1,126 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Agent" as Agent
+participant ":PurchaseRequestUI" as UI
+participant ":ListPropertyOrdersController" as CTRL
+participant ":Repositories" as RepositorySingleton
+participant "repositories\n:Repositories" as PLAT
+participant "PurchaseRequestRepository:\nPurchaseRequestRepository" as PurchaseRequestRepository
+participant "storeRepository:\nStoreRepository" as StoreRepository
+participant "store\n:Store" as Store
+participant "propertySale\n:PropertySale" as PropertySale
+participant "PurchaseRequest\n:PurchaseRequest" as PurchaseRequest
+participant "message\n:Message" as Message
+
+activate Agent
+
+        Agent -> UI : asks to list property orders
+
+        activate UI
+
+'            UI --> ADM : requests data (reference, description,  informal \n description, technical description, duration, cost)
+            'create CTRL
+            UI -> CTRL** : create
+
+            UI -> CTRL : getPropertyOrders()
+            activate CTRL
+
+                CTRL -> RepositorySingleton : getInstance()
+                activate RepositorySingleton
+
+                    RepositorySingleton --> CTRL: repositories
+                deactivate RepositorySingleton
+
+                CTRL -> PurchaseRequestRepository : getPurchaseRequestRepository()
+                activate PurchaseRequestRepository
+
+                    PurchaseRequestRepository --> CTRL : propertyOrdersList
+                deactivate PurchaseRequestRepository
+
+                CTRL --> UI : propertyOrdersList
+            deactivate CTRL
+
+            UI --> Agent : shows property orders list\n and asks to select one
+        deactivate UI
+
+    Agent -> UI : selects a property order
+    activate UI
+
+    UI -> CTRL : getListedProperty()
+    activate CTRL
+
+    CTRL -> PropertySale : getListedProperty()
+    activate PropertySale
+
+    PropertySale --> CTRL : listedProperty
+    deactivate PropertySale
+
+    CTRL --> UI : listedProperty
+    deactivate CTRL
+
+        UI --> Agent : shows data related to that order
+    deactivate UI
+
+    Agent -> UI : types decision
+    activate UI
+
+        UI --> Agent : asks for confirmation
+    deactivate UI
+
+    Agent -> UI : accepts or declines
+    activate UI
+
+    alt orderDecision is Accept
+
+                UI -> CTRL : sendEmailToClient(decision) : send decision
+                activate CTRL
+
+                CTRL -> Message : sendEmailToClient(decision)
+                activate Message
+
+                Message --> CTRL : message sent
+                deactivate Message
+
+                CTRL -> PurchaseRequest : requestBuy(reference)
+                activate PurchaseRequest
+
+                PurchaseRequest --> CTRL : propertyOrder
+                deactivate PurchaseRequest
+
+                CTRL -> PropertySale : removeSale(reference)
+                activate PropertySale
+
+                PropertySale --> CTRL : order removed
+                deactivate PropertySale
+
+                CTRL --> UI : message sent and order removed
+                deactivate CTRL
+
+    else orderDecision is Decline
+
+                    UI -> CTRL : sendEmailToClient(decision) : send decision
+                    activate CTRL
+
+                    CTRL -> Message : sendEmailToClient(decision)
+                    activate Message
+
+                    Message --> CTRL : message sent
+                    deactivate Message
+
+                    CTRL --> UI : message sent
+                    deactivate CTRL
+
+    end alt
+
+                    UI --> Agent : message sent and order removed or kept
+                    deactivate UI
+
+deactivate Agent
+
+@enduml

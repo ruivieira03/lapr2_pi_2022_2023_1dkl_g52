@@ -1,0 +1,124 @@
+@startuml
+
+actor Client
+
+participant "ReadAppoitementRequestUI" as UI
+participant "ReadAppoitementRequestController" as Controller
+participant "Repositories" as Repos
+participant "PropertySaleRepository" as PropRepo
+participant "Notification" as Notification
+participant "Message" as Message
+
+activate Client
+
+    Client -> UI: Run ReadAppoitementRequestUI
+
+        activate UI
+
+            UI -> Controller: Get Notifications
+
+                activate Controller
+
+                    Controller -> Repos: getVisiteRequestRepository()
+
+                        activate Repos
+
+                            Repos -> PropRepo: Get Property Sale Repository
+
+                        deactivate Repos
+
+                    Controller -> PropRepo: Get Property Sales
+
+                        activate PropRepo
+
+                            PropRepo --> Controller: Return Property Sales
+
+                        deactivate PropRepo
+
+                    Controller -> VisitRequestRepository: Get Visit Requests
+
+                        activate VisitRequestRepository
+
+                            VisitRequestRepository --> Controller: Return Visit Requests
+
+                        deactivate PropRepo
+
+                    Controller -> Notification: Create Notifications
+
+                        activate Notification
+
+                            Notification -> Message: Create Messages
+
+                            Notification -> UI: Show Notifications
+
+                        deactivate Notification
+
+                deactivate Controller
+
+            UI -> Client: Display Notifications
+
+        deactivate UI
+
+    Client -> UI: Select a Message
+
+        activate UI
+
+            UI -> Controller: Get Selected Message
+
+                activate Controller
+
+                    Controller -> Message: Get Message Details
+
+                    Controller -> UI: Show Message Details
+
+                deactivate Controller
+
+            UI -> Client : Accept or Decline
+
+        deactivate UI
+
+alt
+    Client -> UI : Accept Appointement
+
+        activate UI
+
+            UI -> Client : "Your Appointement is scheduled"
+
+        deactivate UI
+else
+
+    Client -> UI : Decline Appointement
+
+        activate UI
+
+            UI -> Client : Write the reason of declining
+
+        deactivate UI
+
+    Client -> UI : Reason
+
+        activate UI
+
+            UI -> Controller : add declined appointement to declined visit request
+
+                activate Controller
+
+                    Controller -> VisitRequestRepository : addDeclinedVisitRequest()
+
+                    activate VisitRequestRepository
+
+                        VisitRequestRepository -> Controller : "Operation Success"
+
+                    deactivate VisitRequestRepository
+
+                    Controller -> UI : "Operation Success"
+
+                deactivate Controller
+
+            UI -> Client : "Operation Success"
+
+        deactivate UI
+
+deactivate Client
+end
+@enduml

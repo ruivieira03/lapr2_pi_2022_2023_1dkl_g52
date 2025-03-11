@@ -1,0 +1,70 @@
+@startuml
+
+class Client
+
+class ReadAppoitementRequestUI {
+    +run()
+    +getSelectedMessage(): Message
+    +displayNotifications()
+    +showMessageDetails(message: Message)
+    +showAppointmentConfirmation()
+    +showDeclineReasonForm()
+    +showOperationSuccess()
+}
+
+class ReadAppoitementRequestController {
+    +getNotifications(): List<Notification>
+    +getPropertySales(): List<PropertySale>
+    +getVisitRequests(): List<VisitRequest>
+    +createNotifications(propertySales: List<PropertySale>, visitRequests: List<VisitRequest>): List<Notification>
+    +getMessageDetails(message: Message): Message
+    +addDeclinedVisitRequest(visitRequest: VisitRequest): boolean
+}
+
+class Repositories {
+    +getPropertySaleRepository(): PropertySaleRepository
+    +getVisitRequestRepository(): VisitRequestRepository
+}
+
+class PropertySaleRepository {
+    +getPropertySales(): List<PropertySale>
+}
+
+class VisitRequestRepository {
+    +getVisitRequests(): List<VisitRequest>
+    +addDeclinedVisitRequest(visitRequest: VisitRequest): boolean
+}
+
+class Notification {
+    +createMessages(propertySales: List<PropertySale>, visitRequests: List<VisitRequest>): List<Message>
+}
+
+class Message {
+    +getMessageDetails(): Message
+}
+
+class PropertySale {
+    // properties
+}
+
+class VisitRequest {
+    // properties
+}
+
+Client --> ReadAppoitementRequestUI: <<uses>>
+ReadAppoitementRequestUI --> ReadAppoitementRequestController: <<uses>>
+ReadAppoitementRequestController --> Repositories: <<creates>>
+ReadAppoitementRequestController --> PropertySaleRepository: <<uses>>
+ReadAppoitementRequestController --> VisitRequestRepository: <<uses>>
+ReadAppoitementRequestController --> Notification: <<creates>>
+ReadAppoitementRequestController --> Message: <<uses>>
+ReadAppoitementRequestUI --> Client: <<uses>>
+ReadAppoitementRequestUI --> Message: <<uses>>
+ReadAppoitementRequestUI --> VisitRequest: <<uses>>
+ReadAppoitementRequestUI --> PropertySale: <<uses>>
+ReadAppoitementRequestController ..> VisitRequestRepository: <<uses>>
+VisitRequestRepository --> VisitRequest: <<uses>>
+ReadAppoitementRequestController ..> PropertySaleRepository: <<uses>>
+PropertySaleRepository --> PropertySale: <<uses>>
+
+@enduml

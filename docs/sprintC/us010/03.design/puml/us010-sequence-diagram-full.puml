@@ -1,0 +1,124 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+actor "Owner" as OWN
+participant ":PurchaseRequestUI" as UI
+participant ":PurchaseRequestController" as PC
+participant ":Repositories" as R
+participant ":Repositories\nrepositories" as rep
+participant "PurchaseRequestRepository\n:PurchaseRequestRepository" as PRR
+participant ":PurchaseRequest\nPurchaseRequest" as PR
+participant ":ApplicationSession" as ASP
+participant ":applicationSession\nApplicationSession" as asp
+participant ":currentSession\nUserSession" as CS
+participant ":clientRepository\nClientRepository" as CR
+participant ":client\nClient" as Client
+participant ":propertySaleRepository\nPropertySaleRepository" as PSR
+
+activate OWN
+OWN -> UI : Selects to Purchase \n a property
+activate UI
+UI -> PC ** : creates
+UI --> OWN : asks to select which property from the \n previous list he pretends to purchase
+deactivate UI
+OWN -> UI : selects property
+
+activate UI
+UI -> PC : getPropertySaleList(sortCriteria)
+
+activate PC
+PC ->PSR : listProperties(sortCriteria)
+activate PSR
+PSR --> PC : PropertySaleList
+deactivate PSR
+PC --> UI : PropertySaleList
+deactivate PC
+
+
+UI --> OWN : asks order amount
+deactivate UI
+
+OWN -> UI : Gives order amount
+activate UI
+UI -> PC : createPurchaseRequest(propertySale,orderAmount)
+activate PC
+PC -> PC : getClient()
+activate PC
+PC -> R : getInstance()
+
+activate R
+R--> PC : repositories
+deactivate R
+
+PC -> ASP : getInstance()
+activate ASP
+ASP --> PC : appSession
+deactivate ASP
+PC -> asp : getCurrentSession()
+activate asp
+asp --> PC : currentSession
+deactivate asp
+PC -> CS : getUserID()
+activate CS
+CS --> PC : email
+deactivate CS
+PC -> R : getClientRepository
+activate R
+R --> PC : clientRepositories
+deactivate R
+PC -> CR : getClientFromEmail(email)
+activate CR
+loop for each client
+CR -> Client : hasEmail(email)
+activate Client
+Client --> CR : true/false
+deactivate Client
+end loop
+deactivate Client
+CR --> PC : client
+deactivate CR
+PC --> PC : client
+deactivate PC
+
+deactivate CS
+PC -> R : getPurchaseRequestRepository()
+activate R
+R -> rep : getPurchaseRequestRepository()
+activate rep
+rep --> R : purchaseRequestRepository
+deactivate rep
+R --> PC : purchaseRequestRepository
+deactivate R
+PC -> PRR : createPurchaseRequest(propertySale,OrderAmount,client)
+activate PRR
+PRR -> PR ** : create(propertySale,OrderAmount,client)
+activate PR
+
+PR -> PR : isValid()
+activate PR
+deactivate PR
+deactivate PR
+PRR -> PRR : addPurchaseRequest()
+activate PRR
+PRR -> PRR : isValid(purchaseRequest)
+activate PRR
+loop for each purchase request
+PRR -> PRR : equals(purchaseRequest)
+activate PRR
+PRR --> PRR : true/false
+end loop
+deactivate PRR
+PRR --> PRR : true/false
+deactivate PRR
+PRR --> PRR : true/false
+deactivate PRR
+PRR --> PC : true/false
+deactivate PRR
+PC --> UI : true/false
+deactivate PC
+UI --> OWN : (in)Success of Operation
+deactivate UI
+deactivate OWN
+@enduml

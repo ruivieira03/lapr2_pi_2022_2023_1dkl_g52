@@ -1,0 +1,58 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class ListEmployeeUI {
+}
+
+class ListEmployeeController {
+  +listAllEmployees
+}
+class Repositories {
+ +getStoreRepository()
+ +getPropertySalesRepository()
+ +getInstance()
+}
+
+class StoreRepository{
+ +getStortedStoreList()
+ +getAgentListFromStore()
+}
+
+class Store{
+    -ID
+    -address
+    -Name
+    -Email
+    -PhoneNumber
+    -Property
+    +getID()
+    +getAddress()
+    +getName()
+    +getEmail()
+    +getPhoneNumber()
+    +getProperty()
+}
+
+class PropertySaleRepository {
+    +getPropertySalesList()
+}
+
+class UserSession {
+    +getUserRole()
+}
+
+
+
+
+ListEmployeeUI --> ListEmployeeController
+
+ListEmployeeController --> Repositories
+
+StoreRepository --> Store : knows >
+
+Repositories --> StoreRepository
+Repositories --> PropertySaleRepository
+
+ListEmployeeController ..> UserSession
+
+@enduml

@@ -1,0 +1,42 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+title Domain Model - US008
+
+
+
+class Agent {
+    name
+    passport card number
+    tax number
+    adress
+    email adress
+    phone number
+    password
+    agency
+}
+
+class PropertySaleRequest {
+type of business
+requested price
+property
+}
+
+class PropertySale{
+comission
+type of comission
+}
+
+Agent "1" ---> "0..*"PropertySaleRequest
+PropertySale "1" ---|> "1" PropertySaleRequest
+Agent "1" ---> "0..*"PropertySale
+@enduml

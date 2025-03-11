@@ -1,0 +1,66 @@
+@startuml
+
+title US015 - List visit requests
+
+top to bottom direction
+
+class Algorithms {
+  + mergeSort(List<VisitRequestDTO>, int, int): void
+  + bubbleSort(List<VisitRequestDTO>): void
+  - sort(List<VisitRequestDTO>, int, int, int): void
+}
+class AuthenticationRepository {
+  + getCurrentUserSession(): UserSession
+}
+
+class ListVisitRequestsUI {
+  - beginDate: LocalDate
+  - endDate: LocalDate
+  - requestDates(): void
+  - dataIsConfirmed(): boolean
+}
+
+class Repositories {
+  + getVisitRequestRepository(): VisitRequestRepository
+  + getAuthenticationRepository(): AuthenticationRepository
+  + getStoreRepository(): StoreRepository
+}
+
+class ReviewVisitRequestsController {
+  - startTime: long
+  - endTime: long
+  - repositories: Repositories
+  + getVisitRequestByAgentAsString(): String[]
+  - sortList(List<VisitRequestDTO>): void
+  + getVisitRequests(LocalDate, LocalDate): List<VisitRequestDTO>
+  + getPropertySaleRequestListFromAgent(): ErrorOptional<List<VisitRequestDTO>>
+  - getAgentFromSession(): ErrorOptional<AgentDTO>
+}
+
+class StoreRepository {
+  + getAgentDTOFromEmail(String): ErrorOptional<AgentDTO>
+}
+
+class UserSession {
+  + getUserId(): Email
+}
+
+class Utils {
+  + ReadProperties(String): String
+  + showVisitRequestsList(List<VisitRequestDTO>, String): void
+}
+
+class VisitRequestRepository {
+  + getVisitRequestListFromAgent(AgentDTO): ErrorOptional<List<VisitRequestDTO>>
+  + filterByDate(ErrorOptional<List<VisitRequestDTO>>, LocalDate, LocalDate): List<VisitRequestDTO>
+}
+
+Repositories                  "1" *-[#595959,plain]-> "authenticationRepository\n1" AuthenticationRepository
+Repositories                  "1" *-[#595959,plain]-> "storeRepository\n1" StoreRepository
+Repositories                  "1" *-[#595959,plain]-> "visitRequestRepository\n1" VisitRequestRepository
+ReviewVisitRequestsController "1" -[#595959,plain]-> "repositories\n1" Repositories
+ReviewVisitRequestsController "1" -[#595959,plain].> "utils\n1" Utils
+ReviewVisitRequestsController "1" <--[#595959,plain] "listVisitRequestsUI\n1" ListVisitRequestsUI
+ReviewVisitRequestsController "1" -[#595959,plain].>  Algorithms
+ReviewVisitRequestsController "1" -[#595959,plain].> "userSession\n1" UserSession
+@enduml

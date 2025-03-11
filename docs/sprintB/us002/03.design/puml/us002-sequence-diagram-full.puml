@@ -1,0 +1,301 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Agent" as Agent
+participant ":RegisterPropertySaleUI" as UI
+participant ":RegisterPropertySaleController" as Controller
+participant ":Repositories" as Repositories
+participant "repositories\n:Repositories" as rep
+participant "locationsRepository\n:LocationsRepository" as locations
+participant "state\n:State" as state
+participant "district\nDistrict" as district
+participant ":ApplicationSession" as AppSession
+participant "applicationSession\n:AplicationSession" as appsession
+participant "currentSession\n:UserSession" as currSession
+participant "branchesRepository\n:BranchesRepository" as branchesRep
+participant "branch\n:Branch" as branch
+participant "store\n:Store" as store
+participant "agent\n:Agent" as agentObj
+participant "clientRepository\n:ClientRepository" as clientRep
+participant "client\n:Client" as client
+participant "propertySaleRepository\n:PropertySaleRepository" as propertyRep
+participant "propertySale\nPropertySale" as propertySale
+
+activate Agent
+
+    Agent -> UI : asks to register a property
+    activate UI
+
+        UI -> Controller**: create()
+        activate Controller
+
+            Controller -> Repositories : getInstance()
+            activate Repositories
+
+                Repositories --> Controller : repositories
+
+            deactivate Repositories
+        deactivate Controller
+
+        UI --> Agent:requests data
+    deactivate UI
+
+    Agent -> UI: selects data(type of business, propertyType)
+    activate UI
+
+        UI --> Agent : requests data
+    deactivate UI
+
+    Agent -> UI : types data(area, distance from city center, requested price)
+    activate UI
+
+        UI -> Controller : getStatesList()
+        activate Controller
+
+            Controller -> rep : getLocationsRepository()
+            activate rep
+
+                rep --> Controller : locationsRepository
+            deactivate rep
+
+            Controller -> locations : getStatesList()
+            activate locations
+
+                locations --> Controller : statesList
+            deactivate locations
+
+            Controller --> UI : statesList
+        deactivate Controller
+
+        UI --> Agent : shows a list of states \nrequests data
+    deactivate UI
+
+    Agent -> UI : selects data (state)
+    activate UI
+
+        UI -> Controller : getDistrictsList(state)
+        activate Controller
+
+            Controller -> state : getDistrictsList()
+            activate state
+
+                state --> Controller : districtsList
+            deactivate state
+
+            Controller --> UI : districtsList
+        deactivate Controller
+
+        UI --> Agent : shows a list of districts\nrequests data
+    deactivate UI
+
+    Agent -> UI : selects data(district)
+    activate UI
+
+        UI -> Controller : getCitiesList()
+        activate Controller
+
+            Controller -> district : getCitiesList()
+            activate district
+
+                district --> Controller : citiesList
+            deactivate district
+
+            Controller --> UI : citiesList
+        deactivate Controller
+
+        UI --> Agent : shos a list of cities\nrequests data
+        deactivate UI
+
+    Agent -> UI : selects data(city)
+    activate UI
+
+        UI --> Agent : requests data
+    deactivate UI
+
+    Agent -> UI : types data (street, zipcode)
+    activate UI
+
+alt propertyType == HOUSE or APARMENT
+
+        UI --> Agent : requests data
+    deactivate UI
+
+    Agent -> UI : types data(number of beedrooms, bathrooms, parking spaces and available equipment)
+    activate UI
+
+    alt propertyType == HOUSE
+
+        UI --> Agent : requests data
+    deactivate UI
+
+    Agent --> UI : selects data(existance of inhabitable loft, basement and sun exposure)
+    activate UI
+    end
+
+end
+        UI --> Agent : request data
+    deactivate UI
+
+    Agent -> UI : imports property's photos
+    activate UI
+
+        UI --> Agent : requests data
+    deactivate UI
+
+    Agent -> UI : types owner data(email adress)
+    activate UI
+
+        UI --> Agent : requests data
+    deactivate UI
+
+    Agent -> UI : selects data(type of commission)
+    activate UI
+
+        UI --> Agent : requests data
+    deactivate UI
+
+    Agent -> UI : types data(agent commision)
+    activate UI
+
+        UI -> Controller : createPropertySale(typeOfBusiness, propertyType, \narea, distaceFromCityCenter, requestedPrice, state, \ndistrict, city, adress, photos, ownerEmailAdress, \ntypeOfComission, agentComission)
+        activate Controller
+
+            Controller -> Controller : getAgentFromSession()
+            activate Controller
+
+                Controller -> AppSession : getInstance()
+                activate AppSession
+
+                    AppSession --> Controller : appSession
+                deactivate AppSession
+
+                Controller -> appsession : getCurrentSession()
+                activate appsession
+
+                    appsession --> Controller : userSession
+                deactivate appsession
+
+                Controller -> currSession : getUserId()
+                activate currSession
+
+                        currSession --> Controller : email
+                deactivate currSession
+
+                Controller -> rep : getBrachesRepository
+                activate rep
+
+                    rep --> Controller : branchesRepository
+                deactivate rep
+
+                Controller --> branchesRep : getAgentFromEmail(email)
+                activate branchesRep
+
+                loop for each brach
+                    branchesRep -> branch : getAgent(email)
+                    activate branch
+
+                    loop for each store
+                        branch -> store
+                        activate store
+
+                            store -> agentObj : hasEmail(email)
+                            activate agentObj
+
+                                agentObj --> store : true/false
+                            deactivate agentObj
+
+                        end
+
+                        store --> branch : agent
+                    deactivate store
+
+                    branch --> branchesRep : agent
+                deactivate branch
+                end
+
+                branchesRep --> Controller : agent
+            deactivate branchesRep
+
+            Controller --> Controller : agent
+        deactivate Controller
+
+        Controller -> Controller : getClientFromEmail(ownerEmailAdress)
+        activate Controller
+
+            Controller -> rep : getClientRepository()
+            activate rep
+
+                rep --> Controller : clientRepository
+            deactivate rep
+
+            Controller -> clientRep : getClientFromEmail(ownerEmailAdress)
+            activate clientRep
+
+                loop for each client
+                    clientRep -> client : hasEmail((ownerEmailAdress)
+                    activate client
+
+                        client --> clientRep : true/false
+                    deactivate client
+                end
+
+                clientRep --> Controller : client
+            deactivate clientRep
+
+            Controller --> Controller : client
+        deactivate Controller
+
+        Controller -> rep :  getPropertySaleRepository()
+        activate rep
+
+            rep --> Controller : propertySaleRepository
+        deactivate rep
+
+        Controller -> propertyRep : createPropertySale(typeOfBusiness, propertyType, area, \ndistanceFromCityCenter, requestedPrice, state, \ndistrict, city,  adress, photos, client, \ntypeOfComission, agentCommission, agent)
+        activate propertyRep
+
+            propertyRep -> propertySale** : create(typeOfBusiness, propertyType, area, \ndistanceFromCityCenter, requestedPrice, state, \ndistrict, city,  adress, photos, client, \ntypeOfComission, agentCommission, agent)
+            activate propertySale
+
+                propertySale -> propertySale : isValid()
+                activate propertySale
+                deactivate propertySale
+
+            deactivate propertySale
+
+            propertyRep -> propertyRep : addPropertySale()
+            activate propertyRep
+
+                propertyRep -> propertyRep : isValid(propertySale)
+                activate propertyRep
+
+                    loop for each propertySale
+                        propertyRep -> propertySale : equals(propertySale)
+                        activate propertySale
+
+                            propertySale --> propertyRep : true/false
+                        deactivate propertySale
+
+                    end
+                        propertyRep --> propertyRep : true/false
+
+                deactivate propertyRep
+
+                propertyRep --> propertyRep : true/false
+            deactivate propertyRep
+
+            propertyRep --> Controller : true/false
+        deactivate propertyRep
+
+        Controller --> UI : true/false
+    deactivate Controller
+
+    UI --> Agent : displays (in)success of operation
+
+deactivate Agent
+
+@enduml

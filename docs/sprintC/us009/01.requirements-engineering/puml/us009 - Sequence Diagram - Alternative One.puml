@@ -1,0 +1,48 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD)
+
+autonumber
+
+actor "Client" as Client
+participant ":System" as System
+
+
+activate Client
+
+    Client -> System : Selectes a propertySale (Context ignored later)
+    activate System
+
+        System --> Client : shows Actions (Context ignored later)
+    deactivate System
+
+    Client -> System : asks to make a visit Request (Context ignored later)
+    activate System
+
+        System --> Client : Asks for date(year, month, day)
+    deactivate System
+
+    Client -> System : Types date(year, month, day)
+    activate System
+
+        System --> Client : asks for startTime(hour, minute)
+    deactivate System
+
+    Client -> System : types startTime(hour, minute)
+    activate System
+
+        System --> Client : asks for endTime(hour, minute)
+    deactivate System
+
+    Client -> System : types endTime(hour, minute)
+    activate System
+
+        System --> Client : (In)success of operation
+    deactivate System
+deactivate Client
+
+@enduml

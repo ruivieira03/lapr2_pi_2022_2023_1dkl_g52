@@ -1,0 +1,147 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor Client
+participant "ScheduleVisitUI" as UI
+participant "ScheduleVisitController" as Controller
+participant "ClientRepository" as ClientRepository
+participant "Client" as client
+participant ClientMapper
+participant ClientDTO
+participant VisitRequestRepository
+participant VisitRequestMapper
+participant VisitRequest
+participant ":ApplicationSession" as AppSession
+participant "applicationSession\n:AplicationSession" as appsession
+participant "currentSession\n:UserSession" as currSession
+
+activate Client
+
+    Client -> UI : asks to make a visitRequest
+    activate UI
+
+        UI -> Controller** : create
+
+        UI --> Client : asks for date(yeat, month, day)
+    deactivate UI
+
+    Client -> UI : types date
+    activate UI
+
+        UI --> Client : asks for startTime(hour, minute)
+    deactivate UI
+
+    Client -> UI : types startTime
+    activate UI
+
+        UI --> Client : asks for endTime(hour, minute)
+    deactivate UI
+
+    Client -> UI : types endTime
+    activate UI
+
+        UI -> Controller : registerVisitRequest(visitRequestDTO)
+        activate Controller
+
+            Controller -> Controller : getClientFromUserSession()
+            activate Controller
+
+                Controller -> AppSession : getInstance()
+                activate AppSession
+
+                    AppSession --> Controller : appSession
+                deactivate AppSession
+
+                Controller -> appsession : getCurrentSession()
+                activate appsession
+
+                    appsession --> Controller : userSession
+                deactivate appsession
+
+                Controller -> currSession : getUserId()
+                activate currSession
+
+                        currSession --> Controller : email
+                deactivate currSession
+
+                Controller -> ClientRepository : getClientDTOFromEmail(email)
+                activate ClientRepository
+
+                    ClientRepository -> ClientRepository : getClientFromEmail(email)
+                    activate ClientRepository
+
+                        loop for each client
+                            ClientRepository -> client : hasEmail(email)
+                            activate client
+
+                                client --> ClientRepository : boolean
+                            deactivate client
+                        end
+
+                        ClientRepository --> ClientRepository : client
+                    deactivate ClientRepository
+
+                    ClientRepository -> ClientMapper : toDTO(client)
+                    activate ClientMapper
+
+                        ClientMapper -> ClientDTO** : create
+                        ClientMapper -> ClientRepository : clientDTO
+                    deactivate ClientMapper
+
+                    ClientRepository --> Controller : clientDTO
+                deactivate ClientRepository
+
+                Controller -> Controller : clientDTO
+            deactivate Controller
+
+            Controller -> VisitRequestRepository : registerVisitRequest(visitRequestDTO)
+            activate VisitRequestRepository
+
+                VisitRequestRepository -> VisitRequestMapper : toDomain(visitRequestDTO)
+                activate VisitRequestMapper
+
+                    VisitRequestMapper -> VisitRequest** : create
+                    VisitRequestMapper --> VisitRequestRepository : visitRequest
+                deactivate VisitRequestMapper
+
+                VisitRequestRepository -> VisitRequestRepository : addVisitRequest(visitRequest)
+                activate VisitRequestRepository
+
+                    VisitRequestRepository -> VisitRequest : isValid()
+                    activate VisitRequest
+
+                        VisitRequest --> VisitRequestRepository : boolean
+                    deactivate VisitRequest
+
+                    VisitRequestRepository -> VisitRequestRepository : isValid(visitRequest)
+                    activate VisitRequestRepository
+
+                        loop for each visitRequest
+
+                            VisitRequestRepository -> VisitRequest : equals(visitRequest)
+                            activate VisitRequest
+
+                                VisitRequest --> VisitRequestRepository : boolean
+                            deactivate VisitRequest
+                        end
+
+                        VisitRequestRepository --> VisitRequestRepository :operationResult
+                    deactivate VisitRequestRepository
+
+                    VisitRequestRepository --> VisitRequestRepository : operationResult
+                deactivate VisitRequestRepository
+
+                VisitRequestRepository --> Controller : operationResult
+            deactivate VisitRequestRepository
+
+            Controller --> UI : operationResult
+        deactivate Controller
+
+        UI --> Client : shows operation result
+    deactivate UI
+deactivate Client
+@enduml

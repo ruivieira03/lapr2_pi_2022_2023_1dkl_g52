@@ -1,0 +1,34 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - Alternative One
+
+autonumber
+
+actor "Agent" as Agent
+participant ":System" as System
+
+activate Agent
+
+    Agent -> System : Asks to list purchase orders
+       activate System
+
+           System --> Agent : sends a list of purchase orders
+       deactivate System
+
+    Agent -> System : Reviews each order
+    activate System
+
+        System --> Agent : Waits for agent's decision
+    deactivate System
+
+    Agent -> System : accepts or rejects a purchase order
+
+        System --> Agent : an email is sent to the client with the agent's decision
+    deactivate System
+
+
+
+@enduml

@@ -1,0 +1,73 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+title Domain Model
+
+class Agent{
+name
+adress
+name
+email adress
+phone number
+}
+
+class Owner{
+name
+citizen card number
+tax number
+adress
+email adress
+telephone number
+}
+
+class Property{
+area
+location
+distance from city center
+requested price
+agent comission
+type of business
+type of comission
+}
+
+class Land{
+}
+
+class ResidentialProperty{
+number of bedrooms
+number of bathrooms
+numer of parking spaces
+available equipment
+}
+
+class Apartment{
+
+}
+
+class House{
+existance of a basement
+existance of inhabitable loft
+sun exposure
+}
+
+class PropertyList
+
+PropertyList "1" -- "0..*" Property: has >
+Agent "1" -- "*" Property: creats >
+Property "1" --right "1" Owner: has >
+Property "1" -- "1" Land: can be >
+Property "1" -- "1" ResidentialProperty: can be >
+ResidentialProperty "1" -- "1" Apartment: can be >
+ResidentialProperty "1" -- "1" House: can be >
+@enduml

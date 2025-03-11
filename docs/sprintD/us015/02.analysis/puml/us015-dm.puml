@@ -1,0 +1,63 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+object Agent
+object Client
+object Store
+object Company
+
+object Employee{
+agency
+role
+}
+
+object User {
+name
+emailAddress
+telephone number
+citizen card number
+tax number
+address
+password
+}
+
+object VisitRequest {
+date
+}
+
+object PropertySale {
+comission
+type of comission
+}
+
+object PropertySaleRequest {
+type of business
+requested price
+}
+
+object Property {
+area
+location
+distance from the city center
+photographs
+}
+
+
+
+Employee <|--down  Agent
+Store "1" - "0..*" Agent : contains >
+Company "1" -- "0..*" Employee : employs >
+Agent .. VisitRequest : aproves >
+User <|-- Employee
+Client -- VisitRequest : requests >
+PropertySaleRequest "1" -- "1" Property : contains >
+VisitRequest .. PropertySale : refers to >
+PropertySaleRequest <|--left PropertySale
+
+
+
+
+
+
+
+@enduml

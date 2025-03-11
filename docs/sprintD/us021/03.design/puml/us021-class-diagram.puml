@@ -1,0 +1,111 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+'skinparam linetype orto
+
+skinparam classAttributeIconSize 0
+
+'left to right direction
+
+class ApplicationSession
+{
+    + static getInstance()
+    + getCurrentSession()
+}
+
+class StoreRepository
+{
+    + getAgentFromEmail()
+    + getStore()
+}
+
+class Store {
+}
+
+class Company {
+}
+
+class User {
+    - name : String
+    - emailAddress : String
+    - telephoneNumber : int
+    - citizenCardNumber : int
+    - taxNumber : int
+    - address : Address
+}
+
+class Employee {
+    - agency : String
+    - role : String
+}
+
+class Agent {
+}
+
+class RegisterOpinion {
+    - opinion : String
+    - classification : String
+
+    addOpinion (opinion, classification)
+}
+
+class VisitRequestRepository {
+  + getVisitRequestList()
+}
+
+class Repositories {
+    - Repositories()
+    + getInstance() : Repositories
+    + getVisitRequestRepository()
+    + getStoreRepository()
+}
+
+class RegisterOpinionController {
+    + RegisterOpinionController(storeRepository, visitRequestRepository)
+    + getVisitRequests()
+    + addOpinion(opinion, classification)
+    - getAgentFromSession()
+}
+
+class RegisterOpinionUI {
+}
+
+note right of RegisterOpinionController
+    - classification
+    is retrieved from selected data
+end note
+
+note bottom of VisitRequestRepository
+    - used for not allowing duplicate entries
+end note
+
+
+Repositories -> Repositories : instance
+ApplicationSession -> ApplicationSession : instance
+
+RegisterOpinionUI .> RegisterOpinionController
+
+RegisterOpinionController .> Repositories : repositories
+
+Repositories -> "1" VisitRequestRepository
+
+RegisterOpinionController ..> RegisterOpinion
+RegisterOpinionController ..> VisitRequestRepository : visitRequestRepository
+
+Repositories --> "1" StoreRepository
+
+StoreRepository --> "*" Store
+
+RegisterOpinionController ..> "1" Store : store
+RegisterOpinionController ..> ApplicationSession
+VisitRequestRepository "1" --> "*" RegisterOpinion : registerOpinion
+RegisterOpinion --> Agent : createdBy
+Company "1" --> "*" Store : has
+
+User <|-- Employee
+Employee <|-- Agent
+Store --> "*" Employee : employs
+
+@enduml

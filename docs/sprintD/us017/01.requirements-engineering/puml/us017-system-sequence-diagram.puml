@@ -1,0 +1,33 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+
+
+autonumber
+
+actor "Network Manager" as Manager
+participant ":System" as System
+
+activate Manager
+
+Manager -> System : asks to list all deals made
+    activate System
+
+    System --> Manager : displays the algorithm options available
+        deactivate System
+
+    Manager -> System : chooses a algorithm
+        activate System
+
+    System --> Manager : displays the sorting options available
+        deactivate System
+
+    Manager -> System : chooses a sorting option
+        activate System
+
+        System --> Manager : displays the list of deals made(offers accepted)\n sorted by the option chosen by the user
+        deactivate System
+
+@enduml

@@ -1,0 +1,128 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Unregistered\nUser" as US
+participant ":ListPropertiesUI" as UI
+participant ":ListPropertiesController" as CTRL
+participant ":Repositories" as RepositorySingleton
+participant "repositories\n:Repositories" as REP
+participant "propertySaleRepository:\n:PropertySaleRepository" as PropertySaleRepository
+
+activate US
+
+        US -> UI : selects to display the listed properties
+
+        activate UI
+
+'            UI --> ADM : requests data (reference, description,  informal \n description, technical description, duration, cost)
+            'create CTRL
+            UI -> CTRL** : create
+
+            UI -> CTRL : ListProperties(short sortCriteria)
+            activate CTRL
+
+                CTRL -> RepositorySingleton : getInstance()
+                activate RepositorySingleton
+
+                    RepositorySingleton --> CTRL: repositories
+                deactivate RepositorySingleton
+
+                CTRL -> RepositorySingleton: getPropertySaleRepository()
+                activate RepositorySingleton
+
+                    RepositorySingleton -> REP: getPropertySaleRepository()
+                    activate REP
+
+                    REP --> RepositorySingleton: PropertySaleRepository
+                deactivate REP
+
+                RepositorySingleton --> CTRL: PropertySaleRepository
+                deactivate RepositorySingleton
+
+                            CTRL -> PropertySaleRepository : listProperties(short sortCriteria)
+                            activate PropertySaleRepository
+
+                            PropertySaleRepository --> CTRL : propertyList
+                            deactivate PropertySaleRepository
+
+                            CTRL --> UI : propertyList
+
+                        deactivate CTRL
+
+                        UI --> US : display the listed properties sorted by most recently added\nand the options sort and filter
+                        deactivate UI
+loop until user selects to exit
+                        opt selects to filter
+
+
+
+
+            US -> UI : Selects data
+            activate UI
+
+            UI --> US : display the property business types (rent or sell)
+
+            US -> UI : selects one or not
+
+            UI --> US : display the property types (land, apartment or house)
+
+            US -> UI : selects one or not
+
+            UI --> US : requests to type the number of rooms
+
+            US -> UI : types requested data
+
+            UI -> CTRL: ListProperties(short sortCriteria, short propertyBusiness, short propertyType, int numberOfRooms)
+            activate CTRL
+
+                CTRL -> PropertySaleRepository : SortProperties(short sortCriteria, short propertyBusiness, short propertyType, int numberOfRooms)
+                activate PropertySaleRepository
+
+                PropertySaleRepository --> CTRL : propertyList
+                deactivate PropertySaleRepository
+
+                CTRL --> UI : propertyList
+
+            deactivate CTRL
+
+            UI --> US : display the filtered listed properties sorted by most recently added \nand the options sort and filter
+            deactivate UI
+
+            end
+
+
+
+ opt selects to sort
+
+ US -> UI : selects data
+  activate UI
+
+ UI --> US : display the sort options (by price, by city or by most recently added)
+
+ US -> UI : selects one or not
+ UI -> CTRL : ListProperties(short sortCriteria)
+
+CTRL -> PropertySaleRepository : listProperties(short sortCriteria)
+                            activate PropertySaleRepository
+
+                            PropertySaleRepository --> CTRL : propertyList
+                            deactivate PropertySaleRepository
+
+                            CTRL --> UI : propertyList
+
+                        deactivate CTRL
+
+                        UI --> US : display the listed properties sorted by most recently added\nand the options sort and filter
+                        deactivate UI
+
+
+ end
+
+            deactivate US
+            end
+@enduml

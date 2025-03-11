@@ -1,0 +1,18 @@
+@startuml
+
+actor "Store Manager" as manager
+activate manager
+
+participant ":System" as system
+
+manager -> system : asks to analyse deals
+activate system
+
+system --> manager : asks to choose regression model
+deactivate system
+
+manager -> system : chooses desired regression model
+activate system
+
+system --> manager : shows information
+@enduml

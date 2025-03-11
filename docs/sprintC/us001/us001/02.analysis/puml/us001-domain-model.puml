@@ -1,0 +1,28 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+title Domain Model - US001
+
+class Property {
+    type
+    area
+    location
+    distanceCityCentre
+    price
+    photographs
+}
+
+class Unregistered\nUser {
+
+}
+Unregistered\nUser  "1" --"1..*" Property : search >
+@enduml

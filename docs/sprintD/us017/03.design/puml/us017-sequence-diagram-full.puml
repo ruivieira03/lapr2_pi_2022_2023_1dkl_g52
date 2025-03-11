@@ -1,0 +1,165 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Network Manager" as Manager
+participant ":ListPropertySoldUI" as System
+participant ":ListPropertySoldController" as Controller
+participant "SortAlgorithm" as SortAlgorithm
+participant "SortType" as SortType
+participant ":Repositories" as RepositorySingleton
+participant "repositories\n:Repositories" as repositories
+participant "propertySoldRepository\n:PropertySoldRepository" as PropertySoldRepository
+participant "PropertySoldDTO" as PropertySoldDTO
+participant "PropertySoldMapper" as PropertySoldMapper
+participant "PropertyMapper" as PropertyMapper
+participant "Utils" as Utils
+
+activate Manager
+
+    Manager -> System : asks to list all deals made
+    activate System
+
+    System -> Controller: create
+    activate Controller
+
+    Controller --> System
+    deactivate Controller
+
+        System -> System : getSortAlgorithm
+        activate System
+
+        System -> "SortAlgorithm" : values
+        activate "SortAlgorithm"
+
+        "SortAlgorithm" --> System
+        deactivate "SortAlgorithm"
+
+        System -> Utils : showAndSelectIndex()
+        activate Utils
+
+        Utils -> Utils : showList()
+        activate Utils
+
+        Utils -> Utils : selectsIndex()
+        activate Utils
+
+        Utils -> Utils : readLineFromConsole()
+        activate Utils
+
+        deactivate Utils
+
+        deactivate Utils
+
+        deactivate Utils
+
+        Utils --> System : input
+        deactivate Utils
+
+        System -> Controller : listPropertySold()
+        activate Controller
+
+        Controller -> PropertySoldRepository : listPropertySold()
+        activate PropertySoldRepository
+
+        PropertySoldRepository -> PropertySoldRepository : sortProperties()
+        activate PropertySoldRepository
+
+        alt sortAlgorithm is bubble
+            alt sortType is ascending
+            PropertySoldRepository -> PropertySoldRepository : sortBubbleAscending()
+            activate PropertySoldRepository
+            deactivate PropertySoldRepository
+
+            else sortType is descending
+                PropertySoldRepository -> PropertySoldRepository : sortBubbleDescending()
+                activate PropertySoldRepository
+                deactivate PropertySoldRepository
+
+            end
+
+
+
+        else sortAlgorithm is insertion
+            alt sortType is ascending
+                 PropertySoldRepository -> PropertySoldRepository : sortInsertionAscending()
+                 activate PropertySoldRepository
+                 deactivate PropertySoldRepository
+
+                 else sortType is descending
+                 PropertySoldRepository -> PropertySoldRepository : sortInsertionDescending()
+                 activate PropertySoldRepository
+                 deactivate PropertySoldRepository
+
+        end
+
+        end
+
+        deactivate PropertySoldRepository
+
+        PropertySoldRepository -> PropertySoldMapper : toDTO()
+        activate PropertySoldMapper
+
+        PropertySoldMapper -> ErrorOptional : empty()
+        activate ErrorOptional
+
+        ErrorOptional --> PropertySoldMapper
+        deactivate ErrorOptional
+
+        PropertySoldMapper -> PropertySoldDTO : create
+        activate PropertySoldDTO
+
+        PropertySoldDTO --> PropertySoldMapper : dtos
+        deactivate PropertySoldDTO
+
+        PropertySoldMapper -> PropertyMapper : toDTO()
+        activate PropertyMapper
+
+        PropertyMapper --> PropertySoldMapper
+        deactivate PropertyMapper
+
+        PropertySoldMapper -> ErrorOptional : hasError()
+        activate ErrorOptional
+
+        ErrorOptional --> PropertySoldMapper
+        deactivate ErrorOptional
+
+        PropertySoldMapper -> ErrorOptional : get()
+        activate ErrorOptional
+
+        ErrorOptional --> PropertySoldMapper :dtos
+        deactivate ErrorOptional
+
+        PropertySoldMapper --> PropertySoldRepository : dtos
+        deactivate PropertySoldMapper
+
+        PropertySoldRepository --> Controller : list
+        deactivate PropertySoldRepository
+
+        Controller --> System : list
+        deactivate Controller
+
+        System -> Utils : showPropertySoldList()
+        activate Utils
+
+        Utils -> PropertySoldDTO : toString()
+        activate PropertySoldDTO
+
+        PropertySoldDTO --> Utils : properties sorted and listed
+        deactivate PropertySoldDTO
+
+        Utils --> System : properties sorted and listed
+        deactivate Utils
+
+        System --> Manager : properties sorted and listed
+        deactivate System
+
+
+
+
+
+@enduml

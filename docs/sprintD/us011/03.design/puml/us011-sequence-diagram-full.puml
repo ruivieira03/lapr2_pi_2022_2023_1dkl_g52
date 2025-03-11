@@ -1,0 +1,132 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Agent" as Agent
+participant ":PurchaseRequestUI" as UI
+participant ":ListPropertyOrdersController" as CTRL
+participant ":Repositories" as RepositorySingleton
+participant "repositories\n:Repositories" as PLAT
+participant "PurchaseRequestRepository:\nPurchaseRequestRepository" as PurchaseRequestRepository
+participant "PropertySaleRepository:\nPropertySaleRepository" as PropertySaleRepository
+participant "ClientRepository:\nClientRepository" as ClientRepository
+
+activate Agent
+
+        Agent -> UI : asks to list property orders
+
+        activate UI
+
+'            UI --> ADM : requests data (reference, description,  informal \n description, technical description, duration, cost)
+            'create CTRL
+            UI -> CTRL** : create
+
+            UI -> CTRL : getPropertyOrders()
+            activate CTRL
+
+                CTRL -> RepositorySingleton : getInstance()
+                activate RepositorySingleton
+
+                    RepositorySingleton --> CTRL: repositories
+                deactivate RepositorySingleton
+
+                CTRL -> PurchaseRequestRepository : getPurchaseRequestRepository()
+                activate PurchaseRequestRepository
+
+                    PurchaseRequestRepository --> CTRL : propertyOrdersList
+                deactivate PurchaseRequestRepository
+
+                CTRL --> UI : propertyOrdersList
+            deactivate CTRL
+
+            UI --> Agent : shows property orders list\n and asks to select one
+        deactivate UI
+
+    Agent -> UI : selects a property order
+    activate UI
+
+    UI -> CTRL : listPurchaseRequest()
+    activate CTRL
+
+    CTRL -> PropertySaleRepository : getPurchaseRequestList()
+    activate PropertySaleRepository
+
+    PropertySaleRepository --> CTRL : listedProperty
+    deactivate PropertySaleRepository
+
+    CTRL --> UI : listedProperty
+    deactivate CTRL
+
+        UI --> Agent : shows data related to that order
+    deactivate UI
+
+    UI --> Agent : asks for decision (Y/N)
+    deactivate UI
+
+    Agent -> UI : accepts or declines
+    activate UI
+
+    opt request is Accepted
+
+                UI -> CTRL : acceptRequest() : send decision
+                activate CTRL
+
+                CTRL -> PropertySaleRepository : removePropertySale()
+                activate PropertySaleRepository
+
+                PropertySaleRepository --> CTRL : operation result
+                deactivate PropertySaleRepository
+
+                CTRL -> PurchaseRequestRepository : removePurchaseRequest()
+                activate PurchaseRequestRepository
+
+                PurchaseRequestRepository --> CTRL : operation result
+                deactivate PurchaseRequestRepository
+
+                CTRL -> ClientRepository : sendNotificationToClient()
+                activate ClientRepository
+
+                ClientRepository --> CTRL : operation result
+                deactivate ClientRepository
+
+                CTRL -> PurchaseRequestRepository : removeAllPurchaseRequest()
+                activate PurchaseRequestRepository
+
+                PurchaseRequestRepository --> CTRL : operation result
+                deactivate PurchaseRequestRepository
+
+                CTRL --> UI : operation result
+                deactivate CTRL
+
+    else request is Declined
+
+                    UI -> CTRL : declineRequest() : send decision
+                    activate CTRL
+
+                    CTRL -> PurchaseRequestRepository : removePurchaseRequest()
+                    activate PurchaseRequestRepository
+
+                    PurchaseRequestRepository --> CTRL : operation result
+                    deactivate PurchaseRequestRepository
+
+                    CTRL -> ClientRepository : sendNotificationToClient()
+                    activate ClientRepository
+
+                    ClientRepository --> CTRL : operation result
+                    deactivate ClientRepository
+
+                    CTRL --> UI : operation result
+                    deactivate CTRL
+
+    end alt
+
+                    UI --> Agent : operation result
+                    deactivate UI
+
+deactivate Agent
+
+@enduml

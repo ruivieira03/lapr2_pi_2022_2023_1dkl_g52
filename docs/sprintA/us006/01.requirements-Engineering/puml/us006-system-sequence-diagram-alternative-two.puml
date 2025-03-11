@@ -1,0 +1,41 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - Alternative Two
+
+autonumber
+
+actor "System Admin" as Admin
+participant ":System" as System
+
+activate Admin
+
+    Admin -> System : requests to define a new district
+    activate System
+
+        System --> Admin : shows a list of States
+    deactivate System
+
+    Admin -> System : selects data(states)
+    activate System
+
+        System --> Admin : requests data
+    deactivate System
+
+    Admin -> System : types data(district name)
+    activate System
+
+        System --> Admin : requests data
+    deactivate System
+
+    Admin -> System : types data(one or more city names)
+    activate System
+
+        System --> Admin : (In)Success of Operation
+    deactivate System
+deactivate Admin
+
+@enduml

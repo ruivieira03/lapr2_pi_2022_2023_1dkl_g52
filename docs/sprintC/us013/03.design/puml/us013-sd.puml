@@ -1,0 +1,66 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+participant "Network Manager" as nt
+
+activate nt
+
+    nt -> listEmployeeUI : ask to list all employees
+
+    activate listEmployeeUI
+
+        listEmployeeUI -> listEmployeeConttroller : listAllEmployees()
+
+        activate listEmployeeConttroller
+
+            listEmployeeConttroller -> Repositories : getInstance()
+
+                activate Repositories
+
+                    Repositories -> listEmployeeConttroller : Repositories
+
+                deactivate Repositories
+
+            listEmployeeConttroller -> Repositories : getStoreRepository()
+
+                activate Repositories
+
+                    Repositories -> listEmployeeConttroller : Store Repository
+
+                deactivate Repositories
+
+            listEmployeeConttroller -> StoreRepository : getSortedStoreList()
+
+                activate StoreRepository
+
+                    StoreRepository -> StoreMapper : toDTO(store)
+
+                    activate StoreMapper
+
+                        StoreMapper -> StoreDTO : create(store)
+
+                    deactivate StoreMapper
+
+                    activate StoreDTO
+
+                        StoreDTO -> StoreRepository : StoreDTOList
+
+                    deactivate StoreDTO
+
+                    StoreRepository -> listEmployeeConttroller : StoreDTOList
+
+                deactivate StoreRepository
+
+            listEmployeeConttroller -> listEmployeeUI : StoreDTOList
+
+            deactivate listEmployeeConttroller
+
+            listEmployeeUI -> nt : display Employees List grouped by store and sorted alphabetically
+
+    deactivate listEmployeeUI
+
+deactivate nt
+
+@enduml

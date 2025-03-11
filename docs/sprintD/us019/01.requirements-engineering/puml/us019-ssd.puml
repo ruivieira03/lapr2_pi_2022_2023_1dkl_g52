@@ -1,0 +1,23 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title US019 - Divide a set of stores
+
+autonumber
+
+participant "Network Manager" as nt
+participant "System" as sy
+
+activate nt
+
+    nt -> sy : ask to divide a set of stores into two \nsets with the closest amount of properties between them
+
+    activate sy
+
+        sy -> nt :Divides the set
+
+    deactivate sy
+
+deactivate nt
+
+@enduml

@@ -1,0 +1,31 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+title Domain Model - US007
+
+class User {
+name
+passportNumber
+phoneNumber
+taxNumber
+email
+}
+
+class Client {
+
+}
+
+
+Unregistered\nUser  "1" -- Client : registers into >
+User <|-- Client
+
+@enduml

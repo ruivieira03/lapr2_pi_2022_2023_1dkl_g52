@@ -1,0 +1,53 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+'skinparam linetype ortho
+'left to right direction
+skinparam classAttributeIconSize 0
+hide circle
+hide methods
+
+
+class User {
+name
+emailAddress
+telephone number
+citizen card number
+tax number
+address
+password
+}
+
+class Agent {
+}
+
+class Store {
+}
+
+class StoreManager {
+}
+
+class Employee{
+agency
+role
+}
+
+
+class NetworkManager{
+}
+
+Employee  <|--down NetworkManager
+Employee <|--down  Agent
+Employee <|------- StoreManager
+
+Store "1" -- "1" StoreManager : contains >
+StoreManager . Store : manages >
+Store "1" - "0..*" Agent : contains >
+
+Branch "1" -- "0..*" Store : contains >
+Branch "1" -- "1" NetworkManager : contains >
+NetworkManager "1" .. "1" Branch : manages >
+
+User <|-- Employee
+@enduml

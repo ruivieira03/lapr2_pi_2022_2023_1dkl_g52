@@ -1,0 +1,73 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+'skinparam linetype orto
+
+'left to right direction
+
+class SpecifyLocationsUI {
+
+}
+
+class SpecifyLocationsController {
+__
++ SpecifyLocationsController()
++ createState(stateName, districtsNameList, citiesNameArray)
+}
+
+class Repositories {
+__
++ getInstance()
++ getLocationsRepsitory()
+}
+
+class LocationsRepository {
+__
++ createState(stateName, districtsNameList, citiesNameArray)
++ addState(State)
+- isValid(State)
+- equals(Object)
+}
+
+class State {
++ getDistricts()
+}
+
+class District {
++ getCities()
+}
+
+class City {
+
+}
+
+class Location {
+- String name
+__
++ getLocations()
++ isValid()
+- isNameValid()
++ toString()
+}
+
+
+SpecifyLocationsUI .> SpecifyLocationsController
+
+Repositories -> "1" LocationsRepository
+
+LocationsRepository -> "0..*" State
+State -> "0..*" District
+District -> "0..*" City
+
+State --|> Location : extends
+District--|> Location : extends
+City --|> Location : extends
+
+Location --> "0..*" Location
+
+SpecifyLocationsController ..> Repositories : repositories
+SpecifyLocationsController ..> LocationsRepository : locationsRepository
+
+@enduml

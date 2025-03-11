@@ -1,0 +1,91 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+
+class CreatePropertySaleRequestController {
++getStates()
++getDistricts(State)
++getCities(District)
+}
+
+class CreatePropertySaleRequestUI{
+}
+
+class Repositories {
++getInstance()
++getLocationRepositories()
++getPropertySaleRequestRepositories()
+}
+
+class PropertySaleRequestRepositories{
++createSalesResquest(Input Data)
++addPropertySalesRequest(PropertySalesRequest)
++isValid(PropertySalesRequest)
++equals(PropertySalesRequest)
+}
+
+class LocationRepositories{
++getStates()
+
+}
+class PropertySaleRequest{
+-Property
+-Owner
+-Agent
+-adress
+-state
+-district
+-city
+-requestedPrice
+
++create()
+}
+class State{
++getDistricts()
+}
+class District{
++getCities()
+}
+class City{
+
+}
+class BranchesRepositories{
++getAgents(branch)
++getBranches()
+}
+class Branch{
+getStores(branch)
+}
+class Store{
+-ArrayList Agents
++getAgents()
+}
+
+class Location{
+-String name
++getLocations()
+-toString()
+}
+
+
+CreatePropertySaleRequestUI .> CreatePropertySaleRequestController
+CreatePropertySaleRequestController ..> Repositories : repositories
+Repositories  --> "1" PropertySaleRequestRepositories
+Repositories  --> "1" LocationRepositories
+LocationRepositories --> "0..*" State
+State -> "0..*" District
+District -> "0..*" City
+CreatePropertySaleRequestController ..> LocationRepositories : repositories
+CreatePropertySaleRequestController ..> PropertySaleRequestRepositories : repositories
+Repositories -->"1" BranchesRepositories
+BranchesRepositories <-- Branch
+Branch <|- Store
+
+Location <|--up State : extends
+Location <|--up District :extends
+Location <|--up City : extends
+Location -> "0..*" Location
+
+PropertySaleRequest "0..*"<- PropertySaleRequestRepositories
+CreatePropertySaleRequestController ..> BranchesRepositories : repositories
+@enduml

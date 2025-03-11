@@ -1,0 +1,35 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD)
+
+autonumber
+
+actor "Unregistered User" as User
+participant ":System" as System
+
+activate User
+
+    User -> System : requests to create an account
+
+    deactivate User
+    activate System
+
+        System --> User : displays form with all the atributtes required
+        deactivate System
+        activate User
+
+
+    User -> System : fills everything correctly
+    deactivate User
+    activate System
+
+        System --> User : (in)Success of operation
+        deactivate System
+    activate User
+deactivate User
+
+@enduml

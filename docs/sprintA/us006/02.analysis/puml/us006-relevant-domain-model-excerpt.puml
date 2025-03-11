@@ -1,0 +1,41 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+class SystemAdmin {
+name
+citzen card's number
+tax number
+adress
+email adress
+phone number
+}
+
+class State {
+name
+}
+
+class District {
+name
+}
+
+class City {
+name
+}
+
+SystemAdmin "1" -- State : creats >
+SystemAdmin "1" -- District : creats >
+SystemAdmin "1"-- City : creats >
+
+State "1" - "*" District : has >
+District "1" - "*" City : has >
+@enduml

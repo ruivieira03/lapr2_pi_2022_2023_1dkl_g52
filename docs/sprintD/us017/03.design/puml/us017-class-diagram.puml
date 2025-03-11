@@ -1,0 +1,79 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+'skinparam linetype orto
+
+skinparam classAttributeIconSize 0
+
+'left to right direction
+
+class ListPropertySoldUI{
++ getSortAlgorithm()
++ getSortingOption()
+}
+
+class ListPropertySoldController{
++ getAlgorithmOptions()
++ listDealsMade()
+}
+
+class Repositories{
+- Repositories()
++ getInstance(): Repositories
++ getPropertySoldRepository()
+}
+
+class PropertySale{
+
+}
+
+class PropertySold{
+- paidAmount : float
+- buyer : Client
+- purchaseData : LocalDataTime
+
++ getBuyer()
++ getPurchaseData()
++ getPaidAmount()
+}
+
+class PropertySoldRepository{
+- List<PropertySold> dealMadeList
+
++ createPropertySold()
++ addPropertySold()
++ isValid()
++ listPropertySold()
++ sortProperties()
++ sortBubble()
++ sortInsertion()
+}
+
+class Property{
+- area : float
+
++ getArea()
+}
+
+ListPropertySoldUI .> ListPropertySoldController
+
+Repositories -> Repositories : instance
+
+ListPropertySoldController.>Repositories: repositories
+
+Repositories -> "1" PropertySoldRepository
+
+ListPropertySoldController ..> PropertySoldRepository : propertySoldRepository
+
+ListPropertySoldController ..> "1" PropertySold : propertySold
+
+PropertySale "1" <|-- "1" PropertySold : contains
+
+PropertySale "1" --> "0.*" Property : has
+
+
+PropertySoldRepository "1" --> "*" PropertySale
+
+@enduml

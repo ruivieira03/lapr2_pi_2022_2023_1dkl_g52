@@ -1,0 +1,269 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+actor "Owner" as OWN
+participant ":CreatePropertySaleRequestUI" as CRUI
+participant ":PropertySaleRequestController" as RC
+participant ":Repositories" as R
+participant ":Repositories\nrepositories" as rep
+participant "propertySaleRequestRepositories\n:PropertySaleRequestRepositories" as PSRR
+participant ":propertySalesRequest\nPropertySalesRequest" as PSRS
+participant "locationRepositories\n:LocationRepositories" as LR
+participant "state\n:State" as State
+participant "district\n:District" as District
+
+
+
+participant "branchesrepositories\n:BranchesRepositories" as BR
+participant "branch\n:Branch" as branch
+participant "store\n:Stores" as store
+
+activate OWN
+
+OWN -> CRUI :searches to make a request
+activate CRUI
+CRUI -> RC** :create()
+CRUI -> RC :getBranches()
+activate RC
+RC -> R :getInstance
+activate R
+R --> RC : repositories
+deactivate R
+
+
+
+RC-> rep : getBranchesRepositories()
+activate rep
+rep --> RC : BranchesRepositores
+deactivate rep
+
+
+deactivate R
+RC -> BR : getBranches()
+activate BR
+BR --> RC : branches
+deactivate BR
+RC --> CRUI : branches
+deactivate RC
+
+CRUI --> OWN :Requests type of property and branch
+deactivate CRUI
+OWN -> CRUI :selects branch and type of property
+
+activate CRUI
+CRUI ->RC : getAgents(Branch)
+
+activate RC
+
+
+
+RC -> rep : getBranchesRepositories()
+activate rep
+rep --> RC : BranchesRepositores
+deactivate rep
+
+deactivate R
+RC -> BR : getAgents(Branch)
+activate BR
+BR -> branch :getStores(Branch)
+activate branch
+
+branch -> store : getAgent()
+activate store
+store --> branch :Agent
+
+deactivate store
+branch --> BR : agentsList
+deactivate branch
+BR --> RC : agentsList
+deactivate BR
+RC --> CRUI :agentsList
+deactivate RC
+CRUI --> OWN :Displays Agents in the selected branch
+deactivate CRUI
+
+
+
+
+OWN->CRUI :selects Agent
+activate CRUI
+
+CRUI -> RC :getStates()
+
+activate RC
+
+
+
+
+
+
+RC -> rep : getLocationRepositories()
+
+activate rep
+rep--> RC : LocationsRepositories
+deactivate rep
+
+
+deactivate R
+
+RC -> LR : getStates()
+
+
+
+
+
+activate LR
+LR-->RC : statesList
+deactivate LR
+
+
+
+deactivate State
+
+
+RC -->CRUI :statesList
+deactivate RC
+CRUI --> OWN :requests property data and the State the property's from
+
+
+
+deactivate CRUI
+OWN -> CRUI : Selects State
+
+activate CRUI
+CRUI -> RC :getDistricts(State)
+
+activate RC
+
+
+
+
+
+
+RC -> rep : getLocationRepositories()
+
+activate rep
+rep--> RC : LocationsRepositories
+deactivate rep
+
+
+deactivate R
+
+RC -> State : getDistrics()
+
+
+
+
+
+activate State
+State-->RC : districtsList
+deactivate State
+
+
+RC --> CRUI : districtsList
+deactivate RC
+CRUI--> OWN : Displays available districts on Selected State
+
+deactivate CRUI
+
+OWN -> CRUI : Selects District
+
+activate CRUI
+CRUI -> RC :getCities(District)
+
+activate RC
+
+
+
+
+
+RC -> rep : getLocationRepositories()
+
+activate rep
+rep--> RC : LocationsRepositories
+deactivate rep
+
+
+
+
+RC -> District : getCities()
+
+
+
+
+
+activate District
+District-->RC : citiesList
+deactivate District
+
+
+RC --> CRUI : citiesList
+deactivate RC
+CRUI--> OWN : Displays available Cities on Selected District
+
+
+
+deactivate CRUI
+
+
+deactivate CRUI
+OWN -> CRUI : type data *(propertyType, area, distanceFromCityCenter, requestedPrice, state, district, city\nadress, photos)
+activate CRUI
+alt propertyType = HOUSE OR APARTMENT
+OWN -> CRUI :filled and submited *(propertyType, area, distanceFromCityCenter, requestedPrice, state, district, city\nadress,photos, numberOfBedrooms, parkingSpaces, availableEquipment)
+alt propertyType = HOUSE
+OWN -> CRUI :filled and submited *(propertyType, area, distanceFromCityCenter, requestedPrice, state, district, city\nadress,photos, numberOfBedrooms, parkingSpaces, availableEquipment, existenceOfInabitableLoft, basement, sunExposure)
+end
+end
+
+activate CRUI
+
+CRUI-> RC :createSalesRequest(typeOfBusiness, propertyType, area, distanceFromcityCenter, requestedPrice, state, district, city,\n street, zipCode, photos, selectedAgent, numberOfBedRooms, numberOfBathrooms, parkingSpaces, availableEquipment, existanceOfInhabitableLoft,\n existanceOfBasement, sunExposure))
+activate RC
+
+
+
+
+
+
+RC->rep :getPropertySaleRequestRepositories()
+
+activate rep
+
+rep --> RC : PropertySaleRequestRepositories
+deactivate rep
+
+
+
+
+RC -> PSRR: createSalesRequest(typeOfBusiness, propertyType, area, distanceFromcityCenter, requestedPrice, state, district, city,\n street, zipCode, photos, selectedAgent, numberOfBedRooms, numberOfBathrooms, parkingSpaces, availableEquipment, existanceOfInhabitableLoft,\n existanceOfBasement, sunExposure)
+activate PSRR
+PSRR -> PSRS** : create(typeOfBusiness, propertyType, area, distanceFromcityCenter, requestedPrice, state, district, city,\n street, zipCode, photos, selectedAgent, numberOfBedRooms, numberOfBathrooms, parkingSpaces, availableEquipment, existanceOfInhabitableLoft,\n existanceOfBasement, sunExposure)
+activate PSRS
+
+PSRS -> PSRS :isValid()
+activate PSRS
+deactivate PSRS
+deactivate PSRS
+PSRR -> PSRR : addPropertySaleRequest(PropertySaleRequest)
+activate PSRR
+PSRR -> PSRR : isValid(PropertySaleRequest)
+activate PSRR
+loop for each PropertySaleRequest
+PSRR -> PSRR : equals(PropertySaleRequest)
+PSRR -->PSRR : true/false
+end
+deactivate PSRR
+PSRR --> PSRR: true/false
+deactivate PSRR
+PSRR --> RC :true/false
+RC --> CRUI: true/false
+
+deactivate RC
+CRUI -> OWN :displays (in)success of operation
+deactivate CRUI
+
+
+@enduml

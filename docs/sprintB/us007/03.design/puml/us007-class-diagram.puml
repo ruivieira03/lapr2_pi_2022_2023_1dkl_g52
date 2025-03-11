@@ -1,0 +1,64 @@
+@startuml
+
+class AuthenticationRepository{
++addUser(emailAddress,password,name)
+
+}
+class AuthFacade{
++addUser(emailAddress,password,name)
+}
+
+class Client {
+    - name
+    - emailAddress
+    -telephoneNumber
+    - citizenCardNumber
+    - phone
+    -taxNumber
+    -address
+    +createClient()
+    +isValid()
+    +equals(client)
+}
+class RegistrationUI{
+}
+class RegistrationController{
++create()
++createClient(name,citizenCardNumber, taxNumber\n address, emailAddress, telephoneNumber, password)
+}
+
+class ClientsRepository{
+-ArrayList Clients
++addClient(client)
++isValid(client)
++createClient(name,citizenCardNumber, taxNumber\n address, emailAddress, telephoneNumber, password)
+
+}
+
+
+class Repositories {
+    - Repositories()
+    + getInstance() : Repositories
+    + getClientsRepository()
+
+}
+
+RegistrationUI .> RegistrationController
+
+RegistrationController ..> Repositories : repositories
+
+Repositories --> Repositories: instance
+
+ClientsRepository "1"<-- Repositories
+
+Client <-"0..*" ClientsRepository
+
+AuthenticationRepository "1"<-- Repositories
+
+AuthFacade "1"<-- AuthenticationRepository
+
+RegistrationController .> ClientsRepository : repositories
+
+RegistrationController .> AuthenticationRepository :repositories
+
+@enduml

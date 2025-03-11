@@ -1,0 +1,35 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+title Domain Model - US010
+
+class Client {
+
+}
+
+class PropertySale {
+-property
+-price
+}
+class PurchaseRequest{
+-propertySale
+-orderAmount
+-client
+}
+
+class PropertySale{
+}
+
+Client --> PropertySale : Selects among the list "1"
+PropertySale ---> PurchaseRequest: Will make part of "1"
+Client -> PurchaseRequest : initiates "0.."
+@enduml

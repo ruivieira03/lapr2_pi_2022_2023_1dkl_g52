@@ -1,0 +1,115 @@
+@startuml
+
+title US012 - Import Legacy Data
+
+class "ImportDataUI" as ui
+class "ImportDataController" as ctrl {
+    -locationRepo
+    -storeNetRepo
+    -propertySoldRepo
+    -clientRepo
+    -importFileReader
+    +importData(filePath)
+}
+
+class "Repositories" as repo {
+    +getLocationsRepo()
+    +getStoreNetworkRepo()
+    +getPropertySoldRepo()
+    +getClientRepo()
+}
+
+class "ImportFileReader" as reader {
+    +readLocation(filePath)
+    +readStoreData(filePath)
+    +readPropertySoldData(filePath)
+    +readClientData(filePath)
+    +readPropertyData(filePath)
+}
+
+class "LocationsRepository" as lrepo {
+    +addLocationsThroughData(locationList)
+}
+class "Location" as loc
+
+class "StoreNetworkRepository" as snrepo {
+    +addStoreNetworkThroughData(storeDTO, locationList)
+}
+
+class "StoreNetwork" as sn
+
+class "PropertySoldRepository" as psrepo {
+    +addPropertySoldThroughData(propertySoldDTO, propertyDTO, locationList)
+}
+
+class "PropertySold" as ps
+class "Property" as prop
+
+class "ClientRepository" as crepo {
+    +addClientThroughData(clientDTO)
+}
+
+class "ClientDTO" as clientDTO
+class "PropertySoldDTO" as propertySoldDTO
+class "PropertyDTO" as propertyDTO
+class "StoreDTO" as storeDTO
+class "Client" as client
+
+class "ClientMapper" as clientMapper {
+    +toDomain(clientDTO)
+}
+
+class "PropertySoldMapper" as propertySoldMapper {
+    +toDomain(propertySoldDTO)
+}
+
+class "PropertyMapper" as propertyMapper {
+    +toDomain(propertyDTO)
+}
+
+class "StoreMapper" as storeMapper {
+    +toDomain(storeDTO)
+}
+
+class "Store" as store
+
+class "City" as city
+class "State" as state
+class "District" as district
+
+ui --> ctrl : ctrl
+ctrl ..> repo
+ctrl -> reader : importFileReader
+ctrl --> lrepo : locationRepo
+ctrl --> snrepo : storeNetRepo
+ctrl --> psrepo : propertySoldRepo
+ctrl --> crepo : clientRepo
+repo --> lrepo : locationRepository
+repo --> snrepo : storeNetworkRepository
+repo --> psrepo : propertySoldRepository
+repo --> crepo : clientRepository
+lrepo --> loc : location
+snrepo --> sn : storeNetwork
+psrepo --> ps : propertySold
+ps --> prop : property
+reader ..> clientDTO
+reader ..> propertySoldDTO
+reader ..> propertyDTO
+reader ..> storeDTO
+crepo --> client : client
+crepo ..> clientMapper
+psrepo ..> propertySoldMapper
+ps ..> propertyMapper
+snrepo ..> storeMapper
+storeMapper ..> store : store
+propertyMapper ..> prop : property
+propertySoldMapper ..> ps : propertySold
+clientMapper ..> client : client
+sn --> store : store
+loc <|-- city
+loc <|-- state
+loc <|-- district
+
+
+@enduml
+

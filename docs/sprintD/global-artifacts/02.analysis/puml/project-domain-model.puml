@@ -1,0 +1,172 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+'skinparam linetype ortho
+'left to right direction
+skinparam classAttributeIconSize 0
+hide circle
+hide methods
+
+
+class User {
+name
+emailAddress
+telephone number
+citizen card number
+tax number
+address
+password
+}
+
+
+class Company{
+
+}
+
+class Owner {
+}
+
+class Property {
+area
+location
+distance from the city center
+photographs
+}
+
+class Land {
+}
+
+class House{
+existance of basement
+exitance of inhabitable loft
+sun exposure
+}
+
+class Apartment {
+}
+
+class Agent {
+}
+
+class PropertySaleRequest {
+type of business
+requested price
+}
+
+
+class PropertySale {
+comission
+type of comission
+}
+
+class Client {
+
+}
+
+class VisitRequest {
+date
+}
+
+class BuyRequest {
+OrderAmount
+}
+
+class Store {
+}
+
+class StoreManager {
+}
+
+class Branch {
+location
+}
+
+class UnregisteredUser{
+}
+
+class ResidentialProperty{
+number of bedrooms
+number of bathrooms
+number of parking spaces
+available equipment
+}
+
+class Employee{
+agency
+role
+}
+
+
+class NetworkManager{
+}
+
+class State {
+name
+}
+
+class District {
+name
+}
+
+class City {
+name
+}
+
+Company "1" -- "0..*" Employee : employs >
+
+Employee  <|--right SystemAdministrator : extends <
+Employee  <|--down NetworkManager
+Employee <|--down  Agent
+Employee <|------- StoreManager
+
+UnregisteredUser "1" --- "0..*" Property : search >
+
+Store "1" -- "1" StoreManager : contains >
+StoreManager . Store : manages >
+Store "1" - "0..*" Agent : contains >
+
+Branch "1" -- "0..*" Store : contains >
+Branch "1" -- "1" NetworkManager : contains >
+NetworkManager "1" .. "1" Branch : manages >
+
+SystemAdministrator "1" -- "0..*" Employee : registers >
+
+Agent .. PropertySale : registers >
+Agent .. PropertySaleRequest : aproves >
+PropertySaleRequest ..up Agent : refers to >
+Agent .. BuyRequest : aproves >
+Agent .. VisitRequest : aproves >
+PropertySaleRequest <|--left PropertySale
+
+Owner  --right "0..*" Property  : owns >
+PropertySaleRequest "1" -- "1" Property : contains >
+Property  <|-- ResidentialProperty
+Property  <|--right Land
+ResidentialProperty <|-- House
+ResidentialProperty <|-- Apartment
+
+UnregisteredUser "1" --left "1" Client : registers >
+User <|-- Owner
+
+VisitRequest .. PropertySale : refers to >
+BuyRequest .. PropertySale : refers to >
+
+State "1" - "0..*" District : contains >
+District "1" - "0..*" City : contains >
+
+SystemAdministrator -- State : registers >
+SystemAdministrator -- District : registers >
+SystemAdministrator -- City : registers >
+
+Property --left State : contains >
+Property --left District : contains >
+City -- Property : contains <
+
+Client -- VisitRequest : requests >
+Client -- PropertySaleRequest : requests >
+Client -- BuyRequest : requests >
+
+User <|-- Client
+User <|-- Employee
+@enduml

@@ -1,0 +1,34 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+
+
+autonumber
+
+actor "Network Manager" as Manager
+participant ":System" as System
+
+activate Manager
+
+    Manager -> System : asks to study prices using Regression
+    activate System
+
+        System --> Manager : shows options(Linear Regression or Multiliear Regression)
+        deactivate System
+
+    Manager -> System : selects an option
+    activate System
+
+        opt Selected Linear Regression
+            System --> Manager : shows independent variables
+            deactivate System
+
+        Manager -> System : selects a independent variable
+        activate System
+        end
+
+    System --> Manager : shows results
+deactivate Manager
+@enduml

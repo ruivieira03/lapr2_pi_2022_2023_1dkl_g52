@@ -1,0 +1,26 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title US012 - Import Legacy Data
+
+autonumber
+
+participant "Administrator" as adm
+participant ":System" as sys
+
+activate adm
+adm -> sys : asks to import legacy data
+activate sys
+adm <-- sys : asks for file path
+deactivate sys
+adm -> sys : provides file path
+activate sys
+adm <-- sys : asks to confirm file
+deactivate sys
+adm -> sys : confirms file
+activate sys
+adm <-- sys : informs of operation (in)success
+
+
+
+@enduml

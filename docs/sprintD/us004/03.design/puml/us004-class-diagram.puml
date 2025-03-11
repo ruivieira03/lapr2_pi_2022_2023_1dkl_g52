@@ -1,0 +1,99 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+
+class CreatePropertySaleRequestController {
++getAgentListFromStore()
++createPropertySaleRequest()
++getStates()
++getDistricts()
++getCities()
+}
+
+class CreatePropertySaleRequestUI{
+}
+
+class Repositories {
++getInstance()
++getStoreRepository()
++getPropertySaleRequestRepositories()
+}
+
+class PropertySaleRequestRepositories{
++createSalesResquest(Input Data)
++addPropertySalesRequest(PropertySalesRequest)
++isValid(PropertySalesRequest)
++equals(PropertySalesRequest)
+}
+
+class StoreRepository {
+  +getStore()
+}
+
+class Property {
+  -double area
+  -double distanceFromCityCenter
+  -boolean photos
+}
+
+class ResidentialProperty {
+  -int numberOfRooms
+  -int numberOfBedrooms
+  -int numberOfBathrooms
+  -int numberOfParkingSpaces
+  -String availableEquipment
+}
+
+class Apartment {
+}
+
+class House {
+  -boolean existenceOfBasement
+  -boolean ExistenceOfInhabitableLoft
+  -SunExposure sunExposure
+}
+
+
+class PropertySaleRequest{
+-Property
+-Owner
+-Agent
+-adress
+-state
+-district
+-city
+-requestedPrice
+
++create()
+}
+class State{
++getStates()
+}
+class District{
++getDistricts()
+}
+class City{
++getCities()
+}
+
+
+
+CreatePropertySaleRequestUI .> CreatePropertySaleRequestController
+CreatePropertySaleRequestController ..> Repositories : repositories
+Repositories  --> "1" PropertySaleRequestRepositories
+Repositories  --> "1" StoreRepository
+
+CreatePropertySaleRequestController ..> PropertySaleRequestRepositories : repositoriese
+
+Property <|--up Land : extends
+Property <|-- ResidentialProperty : extends
+ResidentialProperty <|-- House : extends
+ResidentialProperty <|-- Apartment : extends
+
+Property <--up City : has
+Property <--up State : has
+Property <--up District : has
+
+PropertySaleRequest "0..*" <- PropertySaleRequestRepositories
+PropertySaleRequest "0..*" <- Property
+@enduml

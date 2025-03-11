@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.ipp.isep.dei.esoft.project.ui.gui.AcceptVisitRequestGUI">
+   <children>
+      <Label alignment="CENTER" layoutX="47.0" layoutY="86.0" prefHeight="39.0" prefWidth="111.0" style="-fx-border-color: blue; -fx-background-color: lightblue;" text="Date of visit">
+         <font>
+            <Font name="Dubai Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="47.0" layoutY="140.0" prefHeight="39.0" prefWidth="111.0" style="-fx-background-color: lightblue; -fx-border-color: blue;" text="Start of visit">
+         <font>
+            <Font name="Dubai Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="47.0" layoutY="194.0" prefHeight="39.0" prefWidth="111.0" style="-fx-background-color: lightblue; -fx-border-color: blue;" text="End of visit">
+         <font>
+            <Font name="Dubai Bold" size="18.0" />
+         </font>
+      </Label>
+      <TextField fx:id="startHour" layoutX="196.0" layoutY="146.0" prefHeight="27.0" prefWidth="82.0" promptText="Hours" />
+      <TextField fx:id="StartMinute" layoutX="295.0" layoutY="146.0" prefHeight="27.0" prefWidth="82.0" promptText="Minutes" />
+      <TextField fx:id="endMinute" layoutX="295.0" layoutY="200.0" prefHeight="27.0" prefWidth="82.0" promptText="Minutes" />
+      <TextField fx:id="endHour" layoutX="196.0" layoutY="200.0" prefHeight="27.0" prefWidth="82.0" promptText="Hours" />
+      <Label alignment="CENTER" layoutX="141.0" layoutY="20.0" prefHeight="35.0" prefWidth="338.0" text="Accepting Visit Request" textFill="#0b6de4">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+      <Button fx:id="acceptButton" layoutX="271.0" layoutY="331.0" mnemonicParsing="false" onAction="#acceptRequest" text="Accept">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Label alignment="CENTER" layoutX="47.0" layoutY="250.0" prefHeight="39.0" prefWidth="111.0" style="-fx-border-color: blue; -fx-background-color: lightblue;" text="Message">
+         <font>
+            <Font name="Dubai Bold" size="18.0" />
+         </font>
+      </Label>
+      <TextField fx:id="message" layoutX="197.0" layoutY="257.0" prefHeight="26.0" prefWidth="366.0" promptText="Message" />
+      <DatePicker fx:id="visitDate" layoutX="192.0" layoutY="93.0" prefHeight="26.0" prefWidth="294.0" />
+   </children>
+</AnchorPane>

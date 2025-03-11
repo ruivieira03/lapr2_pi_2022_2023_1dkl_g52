@@ -1,0 +1,661 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Agent" as AG
+participant ":ReviewVisitRequestRequestUI" as UI
+participant ":ReviewVisitRequestController" as CTRL
+participant ":Repositories" as Rep
+participant "repositories\n:Repositories" as rep
+
+
+
+
+participant "visitRequestRepository\n:VisitRequestRepository" as VRR
+participant "storeNetworkRepository\n:StoreNetworkRepository" as SNR
+participant "clientRepository\nClientRepository" as CR
+
+participant "VisitRequest"
+participant "StoreNetwork" as SN
+
+participant "VisitRequestMapper" as VRM
+participant "PropertyMapper" as PM
+participant "LandMapper" as LM
+participant "ResidentialPropertyMapper" as RPM
+participant "ApartmentMapper" as AM
+participant "HouseMapper" as HM
+participant "StateMapper" as StateM
+participant "DistrictMapper" as DistrictM
+participant "CityMapper" as CityM
+participant "UserMapper" as UserMapper
+participant "ClientMapper" as ClientMapper
+
+
+participant "EmployeeMapper" as EmployeeMapper
+
+participant "OwnerMapper" as OwnerMapper
+
+participant "Agent" as AgentMapper
+
+participant "NetworkManagerMapper" as NetworkManagerMapper
+
+participant "StoreManagerMapper" as StoreManagerMapper
+
+participant "SystemAdministratorMapper" as SystemAdministratorMapper
+
+participant "Utils" as Utils
+
+activate AG
+
+        AG -> UI : Selects to display all visit requests made to himself
+
+         activate UI
+
+
+
+                    UI -> CTRL : getVisitRequestListFromAgent()
+                    activate CTRL
+
+                    CTRL -> Rep : getInstance()
+                                                activate Rep
+
+                                                    Rep --> CTRL: repositories
+
+                                                deactivate Rep
+
+                                CTRL -> CTRL : getAgentFromSession()
+                                activate CTRL
+
+                            CTRL -> AppSession : getInstance()
+                            activate AppSession
+
+                                AppSession --> CTRL : appSession
+                            deactivate AppSession
+
+                            CTRL -> appsession : getCurrentSession()
+                            activate appsession
+
+                                appsession --> CTRL : userSession
+                            deactivate appsession
+
+                            CTRL -> currSession : getUserId()
+                            activate currSession
+
+                                    currSession --> CTRL : email
+                            deactivate currSession
+
+                            CTRL -> rep : getBrachesRepository()
+                            activate rep
+
+                                rep --> CTRL : branchesRepository
+                            deactivate rep
+
+                            CTRL --> branchesRep : getAgentFromEmail(email)
+                            activate branchesRep
+
+                            loop for each brach
+                                branchesRep -> branch : getAgent(email)
+                                activate branch
+
+                                loop for each store
+                                    branch -> store
+                                    activate store
+
+                                        store -> agentObj : hasEmail(email)
+                                        activate agentObj
+
+                                            agentObj --> store : true/false
+                                        deactivate agentObj
+
+                                    end
+
+                                    store --> branch : agent
+                                deactivate store
+
+                                branch --> branchesRep : agent
+                            deactivate branch
+                            end
+
+                            branchesRep --> CTRL : agent
+                        deactivate branchesRep
+
+                        CTRL --> CTRL : agent
+                        deactivate CTRL
+
+
+                        CTRL -> rep : getVisitRequestRepository()
+                        activate rep
+
+                        rep --> CTRL : visitRequestRepository
+                        deactivate rep
+
+                        CTRL -> VRR : listVisitRequests(agent.get())
+                        activate VRR
+
+                        VRR -> rep : getStoreNetworkRepository()
+                        activate rep
+
+                        rep --> VRR: storeNetworkRepository
+                        deactivate rep
+
+                        VRR -> SNR : getAgentFromEmail(agentDTO.email)
+                        activate SNR
+
+                        SNR -> SN : getAgentFromEmail(email)
+                        activate SN
+
+                        SN --> SNR : agent
+                        deactivate SN
+
+                        SNR --> VRR : agent
+                        deactivate SNR
+
+                        VRR -> VRM : toDTO(request)
+                        activate VRM
+
+
+                        VRM -> PM: property = toDTO(getProperty())
+                        activate PM
+
+
+                        alt (property instanceof Land)
+
+                            PM -> LM : toDTO((Land) property)
+
+                            activate LM
+
+
+                            LM --> PM : LandDTO
+                            deactivate LM
+
+                                else property instanceof ResidentialProperty
+                                PM -> RPM : toDTO((ResidentialProperty) property)
+                                activate RPM
+
+
+                                    alt residentialProperty instanceof Apartment
+
+                                    RPM -> AM : toDTO((Apartment) residentialProperty)
+                                    activate AM
+
+                                    AM --> RPM : apartmentDTO
+                                    deactivate AM
+
+
+                                        else residentialProperty instanceof House
+
+                                        RPM -> HM : toDTO((House) residentialProperty)
+                                        activate HM
+
+                                        HM --> RPM : houseDTO
+                                        deactivate HM
+
+                                        RPM --> PM : ResidentialPropertyDTO
+                                        deactivate RPM
+
+                                        end else
+
+                                        PM -> StateM : toDTO(property.getState())
+                                        activate StateM
+
+                                        loop for each District in State
+
+                                            StateM -> DistrictM : toDTO(district)
+                                            activate DistrictM
+
+                                                loop for each City in District
+
+                                                DistrictM -> CityM : toDTO(city)
+                                                activate CityM
+
+                                                CityM --> DistrictM : cityDTO
+                                                deactivate CityM
+
+
+
+                                                end loop
+
+                                        DistrictM --> StateM : DistrictDTO
+                                        deactivate DistrictM
+
+                                         end loop
+
+                                         StateM --> PM : stateDTO
+                                         deactivate StateM
+
+                                         PM -> DistrictM : toDTO(property.getDistrict())
+                                         activate DistrictM
+
+                                                loop for each City in District
+
+                                                DistrictM -> CityM : toDTO(city)
+                                                activate CityM
+
+                                                CityM --> DistrictM : cityDTO
+                                                deactivate CityM
+
+                                                end loop
+
+                                        DistrictM --> PM : DistrictDTO
+                                        deactivate DistrictM
+
+                                        PM -> CityM : toDTO(property.getCity())
+                                        activate CityM
+
+                                        CityM --> PM : cityDTO
+                                        deactivate CityM
+
+                                        PM -> UserMapper : toDTO(property.getClient())
+                                        activate UserMapper
+
+                                            alt user instanceof Client
+
+                                                UserMapper -> ClientMapper : toDTO((Client)  user)
+                                                activate ClientMapper
+
+                                                    alt  client instanceof Owner
+
+                                                        ClientMapper -> OwnerMapper : toDTO((Owner) client)
+                                                        activate OwnerMapper
+
+                                                            OwnerMapper --> ClientMapper : ownerDTO
+
+                                                        deactivate OwnerMapper
+
+                                                    else
+
+
+                                                    end else
+
+                                                ClientMapper --> UserMapper : clientDTO
+
+                                                deactivate ClientMapper
+
+                                            else user instanceof Employee
+
+                                                UserMapper -> EmployeeMapper : toDTO((Employee) user)
+                                                activate EmployeeMapper
+
+                                                    alt employee instanceof Agent
+
+                                                        EmployeeMapper -> AgentMapper : toDTO((Agent) employee)
+                                                        activate AgentMapper
+
+                                                          AgentMapper --> EmployeeMapper : agentDTO
+                                                          deactivate
+
+                                                    else employee instanceof NetworkManager
+
+                                                        EmployeeMapper -> NetworkManagerMapper : toDTO((NetworkManager) employee)
+                                                        activate NetworkManagerMapper
+
+                                                        NetworkManagerMapper --> EmployeeMapper : networkManagerDTO
+                                                        deactivate NetworkManagerMapper
+
+                                                    else employee instanceof StoreManager
+
+                                                        EmployeeMapper -> StoreManagerMapper : toDTO((StoreManager) employee)
+                                                        activate StoreManagerMapper
+
+                                                        StoreManagerMapper --> EmployeeMapper : storeManagerDTO
+                                                        deactivate StoreManagerMapper
+
+                                                    else employee instanceof SystemAdministrator
+
+                                                        EmployeeMapper -> SystemAdministratorMapper : toDTO((SystemAdministrator) employee)
+                                                        activate SystemAdministratorMapper
+
+                                                        SystemAdministratorMapper --> EmployeeMapper : SystemAdministratorDTO
+                                                        deactivate SystemAdministratorMapper
+
+                                                    end else
+
+                                                EmployeeMapper --> UserMapper : employeeDTO
+                                                deactivate EmployeeMapper
+
+                                            end else
+
+                                            UserMapper --> PM : userDTO
+
+                                        deactivate UserMapper
+
+                                        PM --> VRM : property
+                                        deactivate PM
+
+                                        VRM -> UserMapper : toDTO(property.getClient())
+                                                activate UserMapper
+
+                                                     alt user instanceof Client
+
+                                                               UserMapper -> ClientMapper : toDTO((Client)  user)
+                                                              activate ClientMapper
+
+                                                  alt  client instanceof Owner
+
+                                                   ClientMapper -> OwnerMapper : toDTO((Owner) client)
+                                                   activate OwnerMapper
+
+                                                    OwnerMapper --> ClientMapper : ownerDTO
+
+                                                    deactivate OwnerMapper
+
+                                                     else
+
+
+                                                     end else
+
+                                                       ClientMapper --> UserMapper : clientDTO
+
+                                                       deactivate ClientMapper
+
+                                                         else user instanceof Employee
+
+                                                           UserMapper -> EmployeeMapper : toDTO((Employee) user)
+                                                          activate EmployeeMapper
+
+                                                           alt employee instanceof Agent
+
+                                                                EmployeeMapper -> AgentMapper : toDTO((Agent) employee)
+                                                                  activate AgentMapper
+
+                                                                AgentMapper --> EmployeeMapper : agentDTO
+                                                                deactivate
+
+                                                           else employee instanceof NetworkManager
+
+                                                            EmployeeMapper -> NetworkManagerMapper : toDTO((NetworkManager) employee)
+                                                            activate NetworkManagerMapper
+
+                                                             NetworkManagerMapper --> EmployeeMapper : networkManagerDTO
+                                                              deactivate NetworkManagerMapper
+
+                                                              else employee instanceof StoreManager
+
+                                                              EmployeeMapper -> StoreManagerMapper : toDTO((StoreManager) employee)
+                                                              activate StoreManagerMapper
+
+                                                              StoreManagerMapper --> EmployeeMapper : storeManagerDTO
+                                                              deactivate StoreManagerMapper
+
+                                                              else employee instanceof SystemAdministrator
+
+                                                              EmployeeMapper -> SystemAdministratorMapper : toDTO((SystemAdministrator) employee)
+                                                              activate SystemAdministratorMapper
+
+                                                                SystemAdministratorMapper --> EmployeeMapper : SystemAdministratorDTO
+                                                               deactivate SystemAdministratorMapper
+
+                                                               end else
+
+                                                               EmployeeMapper --> UserMapper : employeeDTO
+                                                              deactivate EmployeeMapper
+
+                                                               end else
+
+                                                              UserMapper --> VRM : userDTO
+
+                                                               deactivate UserMapper
+
+                                                               VRM --> VRR : requestDTO
+                                                               deactivate VRM
+
+
+                                                            VRR --> CTRL : requestDTOList
+                                                            deactivate VRR
+
+                                                            CTRL --> UI : requestDTOList
+                                                            deactivate CTRL
+
+
+                    UI -> Utils: showVisitRequestsAndSelectIndex\n(visitRequestList.get(), prompt)
+
+                    Utils --> UI : Display the list of visit requests
+                    deactivate Utils
+
+            UI --> AG : Display the list of visit requests
+            deactivate UI
+
+opt Selects one request
+
+AG -> UI : Selects one request
+
+activate UI
+
+            UI --> AG : Displays the options to accept or decline a request
+
+deactivate UI
+
+AG -> UI : Selects option
+
+alt Selects to accept
+
+UI --> AG : Requests to write the visit date
+
+
+AG -> UI: Types requested data
+activate UI
+
+UI --> AG : Requests to write start of the visit
+deactivate UI
+
+AG -> UI : Types requested data
+activate UI
+
+UI --> AG : Requests to write the end the visit
+deactivate UI
+
+AG --> UI : Types requested data
+activate UI
+
+            UI -> CTRL : addAcceptedRequests(visitRequestDTO)
+            activate CTRL
+
+                CTRL -> VRR : addAcceptedVisitRequest(visitRequestDTO)
+                activate VRR
+
+                VRR --> CTRL : true/false
+                deactivate VRR
+
+            CTRL --> UI : true/false
+            deactivate CTRL
+
+            UI --> AG : Displays in/succes of operation and requests to writte a message to the owner
+            deactivate UI
+
+           AG -> UI : Writtes a message
+           activate UI
+
+           UI --> CTRL : sendEmailMessageToClient(visitRequestDTO.client, messageDTO)
+           activate CTRL
+
+           CTRL -> CTRL : getAgentFromSession()
+                                   activate CTRL
+
+                                       CTRL -> AppSession : getInstance()
+                                       activate AppSession
+
+                                           AppSession --> CTRL : appSession
+                                       deactivate AppSession
+
+                                       CTRL -> appsession : getCurrentSession()
+                                       activate appsession
+
+                                           appsession --> CTRL : userSession
+                                       deactivate appsession
+
+                                       CTRL -> currSession : getUserId()
+                                       activate currSession
+
+                                               currSession --> CTRL : email
+                                       deactivate currSession
+
+                                       CTRL -> rep : getBrachesRepository()
+                                       activate rep
+
+                                           rep --> CTRL : branchesRepository
+                                       deactivate rep
+
+                                       CTRL --> branchesRep : getAgentFromEmail(email)
+                                       activate branchesRep
+
+                                       loop for each brach
+                                           branchesRep -> branch : getAgent(email)
+                                           activate branch
+
+                                           loop for each store
+                                               branch -> store
+                                               activate store
+
+                                                   store -> agentObj : hasEmail(email)
+                                                   activate agentObj
+
+                                                       agentObj --> store : true/false
+                                                   deactivate agentObj
+
+                                               end
+
+                                               store --> branch : agent
+                                           deactivate store
+
+                                           branch --> branchesRep : agent
+                                       deactivate branch
+                                       end
+
+                                       branchesRep --> CTRL : agent
+                                   deactivate branchesRep
+
+                                   CTRL --> CTRL : agent
+                                   deactivate CTRL
+
+                                   CTRL -> CTRL : getClientDTOFromEmail(clientDTO.email.toString())
+
+                                   CTRL -> CR : notifyClient(client.get(), messageDTO)
+                                   activate CR
+
+                                   CR -> CTRL : true/false
+                                   deactivate CR
+
+                                   CTRL --> UI: true/false
+                              deactivate CTRL
+                            deactivate UI
+
+
+'UI --> AG : Displays (In)Sucess of operation
+
+
+else Selects to decline
+
+UI -> CTRL : addDeclinedRequests(visitRequestDTO)
+activate UI
+            activate CTRL
+
+                CTRL -> VRR : addDeclinedRequests(visitRequestDTO)
+                activate VRR
+
+                VRR --> CTRL : true/false
+                deactivate VRR
+
+            CTRL --> UI : true/false
+            deactivate CTRL
+
+            UI --> AG : Displays in/succes of operation and requests to writte a message to the owner
+            deactivate UI
+
+UI --> AG : Requests to writte a message to the owner
+activate UI
+
+deactivate UI
+               AG -> UI : Writtes a message
+              activate UI
+
+               UI --> CTRL : sendEmailMessageToClient(visitRequestDTO.client, messageDTO)
+               activate CTRL
+
+               CTRL -> CTRL : getAgentFromSession()
+                                       activate CTRL
+
+                                           CTRL -> AppSession : getInstance()
+                                           activate AppSession
+
+                                               AppSession --> CTRL : appSession
+                                           deactivate AppSession
+
+                                           CTRL -> appsession : getCurrentSession()
+                                           activate appsession
+
+                                               appsession --> CTRL : userSession
+                                           deactivate appsession
+
+                                           CTRL -> currSession : getUserId()
+                                           activate currSession
+
+                                                   currSession --> CTRL : email
+                                           deactivate currSession
+
+                                           CTRL -> rep : getBrachesRepository()
+                                           activate rep
+
+                                               rep --> CTRL : branchesRepository
+                                           deactivate rep
+
+                                           CTRL --> branchesRep : getAgentFromEmail(email)
+                                           activate branchesRep
+
+                                           loop for each brach
+                                               branchesRep -> branch : getAgent(email)
+                                               activate branch
+
+                                               loop for each store
+                                                   branch -> store
+                                                   activate store
+
+                                                       store -> agentObj : hasEmail(email)
+                                                       activate agentObj
+
+                                                           agentObj --> store : true/false
+                                                       deactivate agentObj
+
+                                                   end
+
+                                                   store --> branch : agent
+                                               deactivate store
+
+                                               branch --> branchesRep : agent
+                                           deactivate branch
+                                           end
+
+                                           branchesRep --> CTRL : agent
+                                       deactivate branchesRep
+
+                                       CTRL --> CTRL : agent
+                                       deactivate CTRL
+
+                                       CTRL -> CTRL : getClientDTOFromEmail(clientDTO.email.toString())
+
+                                       CTRL -> CR : notifyClient(client.get(), messageDTO)
+                                       activate CR
+
+                                       CR -> CTRL : true/false
+                                       deactivate CR
+
+                                       CTRL --> UI: true/false
+                                  deactivate CTRL
+
+
+
+end alt
+
+UI --> AG : Displays (In)Sucess of operation
+deactivate UI
+
+
+
+end opt
+
+
+
+@enduml

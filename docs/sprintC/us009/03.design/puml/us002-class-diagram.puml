@@ -1,0 +1,233 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+'skinparam linetype orto
+
+'skinparam classAttributeIconSize 0
+
+'left to right direction
+
+class RegisterPropertySaleUI{}
+
+class RegisterPropertySaleController{
+- Repository rep
+__
++ RegisterPropertySaleController()
++ getStatesList()
++ getDistrictList(state)
++ getCitiesList(district)
++ createPropertySale(typeOfBusiness, propertyType, \narea, distaceFromCityCenter, requestedPrice, state, \ndistrict, city, adress, photos, ownerEmailAdress, \ntypeOfComission, agentComission)
++ getAgentFromSession()
++ getClientFromEmail()
+}
+
+class Repositories {
+__
+-Repositories()
++ getInstance() : Repositories
++ getLocationsRepository()
++ getBranchesRepository()
++ getClientRepository()
++ getPropertySaleRepository()
+}
+
+class LocationsRepository{
+__
++ getStatesList()
+}
+
+class State {
++ getDistricts()
+}
+
+
+class District {
++ getCities()
+}
+
+class City {
+}
+
+class Location {
+- String name
+__
++ toString()
++ getLocations()
+}
+
+class AplicationSession{
+__
++ static getInstance()
++ get CurrentSession()
+}
+
+class UserSession{
+__
++ getUserId()
+}
+
+class BranchesRepository {
+__
++ getAgentFromEmail(email)
+}
+
+class Branch {
+__
++ getAgentFromEmail(email)
+}
+
+class Store {
+__
++ getAgentFromEmail(email)
+}
+
+class Employee {
+- String name
+- int civilCardNumber
+- int taxNumber
+- String Adress
+- Email email
+- int phoneNumber
+}
+
+class Agent {
+__
+
+}
+
+
+class ClientRepository {
+
+}
+
+class Client {
+
+}
+
+class PropertySaleRepository {
+
+}
+
+class PropertySale {
+- int typeOfComission
+- float commission
+__
++ calculatePrice()
+}
+
+abstract Property {
+- float area
+- String street
+- String zipCode
+- float distanceFromCityCenter
+__
+}
+
+class Land {
+
+}
+
+abstract ResidentialProperty {
+- int numberOfBedrooms
+- int numberOfBathrooms
+- int numberOfParkingSpaces
+- String availableEquipment
+}
+
+class Apartment {
+
+}
+
+class House {
+- boolean existanceOfBasement
+- boolean existanceOfInhabitableLoft
+- int sunExposure
+}
+
+class Owner {
+
+}
+
+
+
+note right of  RegisterPropertySaleController
+    -  userEmail is obtanied
+    from the user session
+end note
+
+
+RegisterPropertySaleUI  ..right> RegisterPropertySaleController
+
+RegisterPropertySaleController .> Repositories : repositories
+Repositories -> Repositories :instance
+Repositories --> "1" LocationsRepository
+Repositories --> "1" BranchesRepository
+Repositories --> "1" ClientRepository
+Repositories --> "1" PropertySaleRepository
+
+
+LocationsRepository --> "1..*" State
+State --> "1..*" District
+District --> "1..*" City
+State -|> Location
+District --|> Location
+City --|> Location
+Location --> Location
+
+BranchesRepository --> "*" Branch
+Branch --> "*" Store
+Store --> "*" Employee : Employs
+Agent --|> Employee
+Store ..> Agent : search
+
+ClientRepository --> "*" Client
+Owner --|> Client
+
+PropertySaleRepository --> "0..*" PropertySale
+
+PropertySale --down> "1" Property
+ResidentialProperty --up|> Property
+Apartment --up|> ResidentialProperty
+House --up|> ResidentialProperty
+Land --up|> Property
+
+Property --o "1" Owner
+Property --o "1" Agent
+
+RegisterPropertySaleController ..> AplicationSession
+AplicationSession -> AplicationSession : instance
+AplicationSession --> "1" UserSession
+RegisterPropertySaleController ..> UserSession
+
+RegisterPropertySaleController ..> ClientRepository : clientRepository
+note bottom of ClientRepository
+    - used to get client
+    account from his email
+end note
+
+RegisterPropertySaleController ..> PropertySaleRepository : propertySaleRepository
+note bottom of PropertySaleRepository
+    - used to create the new PropertySale
+end note
+
+RegisterPropertySaleController ..> LocationsRepository : locationsRepository
+note bottom of LocationsRepository
+    - used to get the
+    states, districts
+    and cities to
+    describe the location
+    of the property
+end note
+
+RegisterPropertySaleController ..> BranchesRepository
+note bottom of BranchesRepository
+    - used to get
+    the agent logged
+    int to the system
+    from its email
+end note
+
+
+@enduml

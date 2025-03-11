@@ -1,0 +1,64 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram
+
+autonumber
+
+actor "Owner" as Owner
+participant ":System" as System
+
+
+activate Owner
+
+Owner -> System : Search's and starts a request
+
+activate System
+
+System-->Owner :Requests to select type of property and Branch of the prefered Agent
+deactivate System
+
+
+Owner -> System : Selects type of property and branch
+
+activate System
+
+System -->Owner:Displays agents of selected branch
+deactivate System
+
+Owner -> System :Selects Agent
+activate System
+
+System --> Owner : Requests State
+deactivate System
+
+Owner -> System : Selects State
+activate System
+
+Owner<--System: Requests District
+deactivate System
+
+Owner -> System : Selects District
+activate System
+
+System --> Owner:Request City
+deactivate System
+Owner -> System : Selects City
+activate System
+
+System --> Owner :  Request Data based on property type selected
+deactivate System
+Owner -> System : Types Data
+activate System
+
+System --> Owner: Displays successe in submission
+deactivate System
+
+
+
+
+
+
+@enduml

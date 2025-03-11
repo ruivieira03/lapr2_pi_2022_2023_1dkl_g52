@@ -1,0 +1,118 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+'skinparam linetype orto
+
+skinparam classAttributeIconSize 0
+
+'left to right direction
+
+class User {
+    - name : String
+    - emailAddress : String
+    - telephoneNumber : int
+    - citizenCardNumber : int
+    - taxNumber : int
+    - address : Address
+}
+
+class Store {
+
+}
+
+class Employee {
+    - agency : String
+    - role : String
+}
+
+class Agent {
+
+}
+
+class Client {
+
+}
+
+class PurchaseRequest {
+    - typeOfBusiness : String
+    - requestedPrice : float
+
+    + sortByPriceComparator()
+}
+
+class PropertySaleRepository {
+    - commission : float
+    - typeOfCommission : String
+
+    + removePropertySaleRequest()
+    + getPropertiesListed()
+}
+
+class PurchaseRequestRepository {
+    - addPurchaseRequest()
+    + createPurchaseRequest()
+    + removePurchaseRequest()
+    + removeAllPurchaseRequest()
+    + listProperties();
+    + listPurchaseRequests()
+}
+
+class ClientRepository {
+    + notifyClient()
+}
+
+class Repositories {
+    - Repositories()
+    + getInstance() : Repositories
+    + getPurchaseRequestRepository()
+}
+
+
+class ListPurchaseRequestsUI {
+}
+
+class ListPurchaseRequestsController {
+    + getPurchaseRequestList()
+    + getPropertySaleList()
+    + removePropertySale()
+    + getAgentFromSession()
+    + removeAllPurchaseRequest()
+    + acceptRequest()
+    + declineRequest()
+    + sendNotificationToClient()
+}
+
+User <|-- Employee
+User <|-- Client
+
+Employee <|-- Agent
+
+Repositories --> Repositories : instance
+
+ListPurchaseRequestsUI -> ListPurchaseRequestsController
+
+ListPurchaseRequestsController ..> PurchaseRequest
+
+PurchaseRequest -> PropertySale
+PurchaseRequest "1" --> "*" PurchaseRequestRepository : has >
+
+ListPurchaseRequestsController .> Repositories : repositories
+
+Repositories -> "1" PurchaseRequestRepository
+Repositories -> "1" PropertySaleRepository
+Repositories -> "1" ClientRepository
+
+PurchaseRequestRepository "1" --> "*" PropertySale
+
+Agent --> ClientRepository : sends notification
+
+PropertySale --> Agent : sees
+PropertySale "1" --> "*" PropertySaleRepository : has >
+
+
+Employee "*" -- "1" Store : works at >
+
+
+@enduml

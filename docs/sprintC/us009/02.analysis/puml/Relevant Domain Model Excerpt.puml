@@ -1,0 +1,79 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+title Domain Model
+
+class VisitRequest{
+visitStart
+visitEnd
+}
+
+class Client {
+
+}
+
+class Agent {
+
+}
+
+class User {
+name
+email
+phone number
+taxnumber
+passportnumber
+adress
+}
+
+
+class PropertySale {
+requeste price
+price
+Type of Comission
+Commission
+}
+
+class Property {
+area
+adress
+zipCode
+distance from the city center
+photographs
+}
+
+note left of  Property
+    hiden for simplicity
+    check US002 or Project
+    Domain model for more
+    details.
+end note
+
+
+note left of  PropertySale
+    hiden for simplicity
+    check US002 or Project
+    Domain model for more
+    details.
+end note
+
+Client --|> User : extends
+Agent --|> User : extends
+PropertySale -->"1" Property : refers to
+Agent -->"1" PropertySale : is responsible
+VisitRequest -->"1" PropertySale : refers to
+
+Client --> VisitRequest : makes
+Agent --> VisitRequest : refers to
+
+@enduml

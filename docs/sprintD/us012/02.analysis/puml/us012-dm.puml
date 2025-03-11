@@ -1,0 +1,79 @@
+@startuml
+'https://plantuml.com/object-diagram
+
+title US012 - Import Legacy Data
+
+object "Administrator" as adm
+
+object "Apartment" as ap
+
+object "Property" as prop {
+area
+requestedPrice
+photographs
+distanceFromCityCenter
+}
+
+object House {
+hasBasement
+inhabitableLoft
+sunExposure
+}
+
+object "User" as us {
+email
+password
+name
+taxNumber
+citizenCardNumber
+telephoneNumber
+}
+
+object "Address" as add {
+street
+postalCode
+city
+}
+
+object "Residence" as res {
+numBedrooms
+numBathrooms
+numParkingSpaces
+equipment
+}
+
+object "Employee" as emp {
+agency
+}
+
+object "Store" as st {
+id
+email
+telephoneNumber
+}
+
+object "Company" as comp {
+name
+vatNumber
+telephoneNumber
+email
+}
+
+object "Land" as land
+
+prop <|-- land
+prop <|-- res
+prop "1" -- "1" add : located at >
+res <|-- House
+res <|-- ap
+comp "1" - "*" st : has >
+comp "1" --- "*" emp : has >
+st "1" -- "1" add : located at >
+adm -- st : registers >
+adm --|> emp
+us "*" -- "1" add : has >
+emp --|> us
+emp "*" -- "1" st : works at >
+
+
+@enduml

@@ -1,0 +1,193 @@
+@startuml
+
+Class PropertySale{
+- CommissionType typeOfCommission
+- double commission
+
+}
+
+Class PropertySaleRequest{
+- int typeOfBusiness
+- float requestedPrice
+}
+
+Class ListPropertySaleRequestUI{
+}
+
+Class ListPropertySaleRequestsController{
++ getPropertySaleRequestListFromAgent()
++ getClientDTOFromEmail(String ownerEmail)
++ getAgentFromSession()
++ removePropertySaleRequest(PropertySaleRequestDTO propertySaleRequestDTO)
++ createPropertySale(PropertySaleRequestDTO propertySaleRequestDTO, PropertySale.CommissionType commissionType, double commission)
++ sendMessageToClient(ClientDTO clientDTO, MessageDTO messageDTO)
+}
+
+Class PropertySaleRequestRepository{
++ removePropertySaleRequest(propertySaleRequestDTO)
+}
+
+Class PropertySaleRepository{
++convertRequestInPropertySale(propertySaleRequestDTO,commissionType,commission)
+}
+
+Class Repositories{
+- Repositories
++ getInstance() : Repositories
++ getPropertySaleRequestRepository()
++ getPropertySaleRepository()
++ getStoreNetworkRepository()
+}
+
+abstract class Property {
+- float area
+- String street
+- String zipCode
+- float distanceFromCityCenter
+
+}
+
+class Land {
+
+}
+
+class City{
+- String name
+}
+
+abstract class ResidentialProperty {
+- numberOfBedrooms
+- numberOfBathrooms
+- numerOfParkingSpaces
+- availableEquipment
+}
+
+class Apartment {
+
+}
+
+class House {
+- existanceOfBasement
+- existanceOfInhabitableLoft
+- sunExposure
+}
+
+class AplicationSession{
+__
++ static getInstance()
++ get CurrentSession()
+}
+
+class UserSession{
+__
++ getUserId()
+}
+
+class Owner {
+
+}
+
+class Client{
+}
+
+class ClientRepository{
+}
+
+class StoreNetworkRepository {
+__
++ getAgentFromEmail(email)
+}
+
+class StoreNetwork {
+__
++ getAgentFromEmail(email)
+}
+
+class Store {
+__
++ getAgentFromEmail(email)
+}
+
+class Employee {
+- String name
+- int civilCardNumber
+- int taxNumber
+- String Adress
+- Email email
+- int phoneNumber
+}
+
+class Agent {
+__
+
+}
+
+
+ListPropertySaleRequestUI .> ListPropertySaleRequestsController
+
+ListPropertySaleRequestsController ..> Repositories
+ListPropertySaleRequestsController ..> PropertySaleRepository
+
+Repositories ---> "1" PropertySaleRepository : PropertySaleRepository
+Repositories ---> "1" PropertySaleRequestRepository: PropertySaleRequestRepository
+Repositories --> "1" ClientRepository
+
+PropertySaleRepository --> "*" PropertySale
+
+Repositories --> Repositories : instance
+
+ResidentialProperty --up|> Property
+Land --up|> Property
+Apartment --up|> ResidentialProperty
+House --up|> ResidentialProperty
+
+Property--> "1" City
+
+PropertySale --|> PropertySaleRequest
+
+PropertySaleRequest --> "1" Property
+
+PropertySaleRequestRepository --> "*" PropertySaleRequest
+
+ListPropertySaleRequestsController ..> PropertySaleRequestRepository
+
+Property --o "1" State
+Property --o "1" District
+Property --o "1" City
+
+ListPropertySaleRequestsController ..> AplicationSession
+AplicationSession -> AplicationSession : instance
+AplicationSession --> "1" UserSession
+ListPropertySaleRequestsController ..> UserSession
+
+Repositories --> "1" LocationsRepository
+Repositories --> "1" StoreNetworkRepository
+
+
+LocationsRepository --> "1..*" State
+State --> "1..*" District
+District --> "1..*" City
+State -|> Location
+District --|> Location
+City --|> Location
+Location --> Location
+
+StoreNetworkRepository --> "*" StoreNetwork
+StoreNetwork --> "*" Store
+Store --> "*" Employee : Employs
+Agent --|> Employee
+Store ..> Agent : search
+
+ClientRepository --> "*" Client
+Owner --|> Client
+
+PropertySaleRepository --> "0..*" PropertySale
+
+Property --o "1" Owner
+Property --o "1" Agent
+
+AplicationSession -> AplicationSession : instance
+AplicationSession --> "1" UserSession
+
+
+@enduml

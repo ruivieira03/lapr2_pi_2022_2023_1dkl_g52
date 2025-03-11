@@ -1,0 +1,68 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD)
+
+autonumber
+
+actor "Agent" as User
+participant ":System" as System
+activate User
+
+
+    User -> System : Requests to display all announcement requests
+    activate System
+
+        System --> User : Display all announcements requests
+        deactivate System
+
+
+opt selects one announcement request
+
+    User -> System : Selects one announcement request
+
+    activate System
+
+        System --> User : Requests to select if the agent wants to accept or decline the announcement
+        deactivate System
+
+
+        alt if the agent selects to accept
+
+    User -> System : Selects to accept the announcement request
+
+    activate System
+
+        System --> User : Requests to select the comission type and to type the comission
+        deactivate System
+
+
+    User -> System : Selects and types the requested data
+
+    activate System
+
+    System --> User : (in)Success of operation
+
+    deactivate System
+
+
+        else else
+
+
+        User -> System : Selects to decline the announcement
+        activate System
+
+        System --> User: Informs (in)success of operation and sends a message to the client
+
+        deactivate System
+
+        end else
+
+        end opt
+
+
+
+@enduml

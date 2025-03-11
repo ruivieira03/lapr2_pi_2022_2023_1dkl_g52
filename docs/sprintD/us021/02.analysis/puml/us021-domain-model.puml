@@ -1,0 +1,61 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+'title Domain Model
+
+'class Platform {
+'  -description
+'}
+
+class Company {
+    name
+    vatNumber
+    website
+    phoneNumber
+    email
+}
+
+class Store {
+
+}
+
+
+class Employee {
+    agency
+    role
+}
+
+class Agent {
+}
+
+class RegisterOpinion {
+  opinion
+  classificationScale
+}
+
+class User {
+name
+emailAddress
+telephone number
+citizenCardNumber
+taxNumber
+address
+}
+
+
+Company "1" - "0.*" Store : owns >
+Employee "1" - "0.*" Agent : has
+Agent "1" -- "*" RegisterOpinion : registers
+Store "1" - "0.*" Employee : has >
+Employee "0..1" -- "1" User: is a >
+
+@enduml

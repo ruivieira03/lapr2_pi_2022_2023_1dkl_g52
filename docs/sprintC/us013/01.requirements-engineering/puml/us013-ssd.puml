@@ -1,0 +1,23 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title US013 - List all employees
+
+autonumber
+
+participant "Network Manager" as nt
+participant "System" as sy
+
+activate nt
+
+    nt -> sy : ask to list all employees
+
+    activate sy
+
+        sy -> nt : List all employees, sorted alphabetially ao grouped by stores
+
+    deactivate sy
+
+deactivate nt
+
+@enduml

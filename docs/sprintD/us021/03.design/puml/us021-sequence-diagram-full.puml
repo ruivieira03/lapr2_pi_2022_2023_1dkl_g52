@@ -1,0 +1,113 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Agent" as Agent
+participant ":RegisterOpinionUI" as UI
+participant ":RegisterOpinionController" as CTRL
+participant ":Repositories" as RepositorySingleton
+participant "repositories\n:Repositories" as PLAT
+participant "visitRequestRepository:\nVisitRequestRepository" as VisitRequestRepository
+participant "appSession\n:ApplicationSession" as APP
+participant "storeRepository:\nStoreRepository" as StoreRepository
+participant "RegisterOpinion\n:RegisterOpinion" as RegisterOpinion
+
+activate Agent
+
+        Agent -> UI : asks to register a new opinion
+        activate UI
+
+'
+            UI -> CTRL** : create
+            activate CTRL
+
+            CTRL --> UI : controller
+            deactivate CTRL
+
+       CTRL --> Agent : asks to type opinion (max 200 characters)
+       deactivate UI
+
+
+    Agent -> UI : types opinion
+    activate UI
+
+        UI --> Agent : requests selected data (classification)
+    deactivate UI
+
+    Agent -> UI : selects the data and submits it
+    activate UI
+
+        UI -> CTRL : addOpinion(opinion, classification)
+        activate CTRL
+
+                CTRL -> RepositorySingleton : getInstance()
+                activate RepositorySingleton
+
+                    RepositorySingleton --> CTRL: repositories
+                deactivate RepositorySingleton
+
+                CTRL -> PLAT : getVisitRequestRepository()
+                activate PLAT
+
+                    PLAT -> CTRL : visitRequestRepository
+                deactivate PLAT
+
+                CTRL -> VisitRequestRepository : getVisitRequestList()
+                activate VisitRequestRepository
+
+                    VisitRequestRepository --> CTRL : visitRequestList
+                deactivate VisitRequestRepository
+
+                CTRL -> StoreRepository : getStoreRepository()
+                activate StoreRepository
+
+                StoreRepository --> CTRL : storeRepository
+
+
+
+            CTRL -> CTRL : getAgentFromSession()
+            activate StoreRepository
+
+                CTRL -> APP: getCurrentSession()
+                activate APP
+
+                    APP --> CTRL: currentSession
+                deactivate APP
+
+                CTRL -> StoreRepository : getAgentFromEmail()
+                activate StoreRepository
+
+                StoreRepository --> CTRL : agent
+                deactivate StoreRepository
+
+            |||
+            CTRL -> RegisterOpinion: addOpinion(opinion, classification)
+            activate RegisterOpinion
+
+                    RegisterOpinion -> RegisterOpinion : validateOpinion(opinion, classification)
+                    activate RegisterOpinion
+
+                    RegisterOpinion --> RegisterOpinion : validatedOpinion
+                    deactivate RegisterOpinion
+
+                    RegisterOpinion -> VisitRequestRepository : addOpinion (opinion, classification)
+                    activate VisitRequestRepository
+
+                    VisitRequestRepository --> RegisterOpinion : added with success
+                    deactivate VisitRequestRepository
+
+                    RegisterOpinion --> CTRL : added with success
+                    deactivate RegisterOpinion
+
+            CTRL --> UI: added with success
+            deactivate CTRL
+            UI --> Agent: displays operation success
+    deactivate UI
+
+deactivate Agent
+
+@enduml

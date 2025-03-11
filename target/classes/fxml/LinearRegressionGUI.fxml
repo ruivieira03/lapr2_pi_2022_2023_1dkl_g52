@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.ipp.isep.dei.esoft.project.ui.gui.LinearRegressionGUI">
+   <children>
+      <Button fx:id="backButton" layoutX="36.0" layoutY="347.0" mnemonicParsing="false" onMousePressed="#backPress" text="Back" />
+      <Line endX="274.70001220703125" endY="359.5" startX="274.70001220703125" startY="120.8000259399414" />
+      <Label layoutX="138.0" layoutY="38.0" text="Linear Regression Study" textFill="#5aadcf">
+         <font>
+            <Font size="26.0" />
+         </font>
+      </Label>
+      <Button fx:id="areaButton" layoutX="69.0" layoutY="101.0" mnemonicParsing="false" onMousePressed="#areaPress" prefHeight="38.0" prefWidth="138.0" text="Area" />
+      <Button fx:id="distanceButton" layoutX="69.0" layoutY="151.0" mnemonicParsing="false" onMousePressed="#distancePress" prefHeight="38.0" prefWidth="138.0" text="Distance from city" />
+      <Button fx:id="bedroomButton" layoutX="70.0" layoutY="200.0" mnemonicParsing="false" onMousePressed="#bedroomsPress" prefHeight="38.0" prefWidth="138.0" text="Amount of bedrooms" />
+      <Button fx:id="bathroomsButton" layoutX="70.0" layoutY="252.0" mnemonicParsing="false" onMousePressed="#bathroomPress" prefHeight="38.0" prefWidth="138.0" text="Amount of bathrooms" />
+      <Button fx:id="parkingButton" layoutX="70.0" layoutY="301.0" mnemonicParsing="false" onMousePressed="#parkingPress" prefHeight="38.0" prefWidth="138.0" text="Amount of parking" />
+      <TextArea fx:id="textResult" editable="false" layoutX="335.0" layoutY="119.0" prefHeight="200.0" prefWidth="200.0" />
+   </children>
+</AnchorPane>

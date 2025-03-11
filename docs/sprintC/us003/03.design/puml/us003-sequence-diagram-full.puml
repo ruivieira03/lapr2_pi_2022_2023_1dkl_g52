@@ -1,0 +1,159 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "System Administrator" as ADM
+participant ":RegisterEmployeeUI" as UI
+participant ":RegisterEmployeeController" as CTRL
+participant ":Repositories" as RepositorySingleton
+participant "repositories\n:Repositories" as PLAT
+participant "BranchesRepository:\nBranchesRepository" as TaskCategoryRepository
+participant "Branch:\nBranch" as branch
+participant "Store:\nStore" as store
+
+
+activate ADM
+
+        ADM -> UI : select to create a new employee
+        activate UI
+
+
+
+
+'            UI --> ADM : requests data (reference, description,  informal \n description, technical description, duration, cost)
+            'create CTRL
+            UI -> CTRL** : create
+
+
+
+
+
+        UI -> ADM : requests employee data (name,passport card number, \ntax number, adress,email adress, telephone number)
+                deactivate UI
+                ADM -> UI : types requested data
+                activate UI
+
+            UI -> CTRL : getStoresBranchsList()
+            activate CTRL
+
+                CTRL -> RepositorySingleton : getInstance()
+                                            activate RepositorySingleton
+
+                                                RepositorySingleton --> CTRL: repositories
+                                            deactivate RepositorySingleton
+
+                CTRL -> PLAT : getBranchesRepository()
+                                activate PLAT
+
+                                    PLAT --> CTRL: BranchesRepository
+                                deactivate PLAT
+
+                CTRL -> TaskCategoryRepository : getStoresBranchList()
+                activate TaskCategoryRepository
+
+                    loop for each brach
+                                        TaskCategoryRepository -> branch : getbranch()
+                                        activate branch
+                                        branch -> TaskCategoryRepository : branch
+                                        deactivate  branch
+                                            TaskCategoryRepository -> store : getStoresBranchList()
+                                            activate store
+                                            store -> TaskCategoryRepository : StoresList
+                                            deactivate store
+
+
+
+                                    deactivate branch
+                                    end
+
+
+                            TaskCategoryRepository --> CTRL : StoresList
+                            deactivate TaskCategoryRepository
+                CTRL --> UI : StoreBranchsList
+            deactivate CTRL
+
+            UI --> ADM : requests a type of employee
+                    deactivate UI
+
+                    ADM -> UI : selects one
+                    activate UI
+
+            UI --> ADM : shows a list of Branchs or Stores\nrequests data
+        deactivate UI
+
+
+    ADM -> UI : selects one(branch or store)
+    activate UI
+
+
+
+    UI --> ADM : displays data confirmation
+    deactivate UI
+
+    ADM -> UI : gives confirmation
+    activate UI
+
+        UI -> CTRL : createEmployee(name, passport card number, \ntax number, adress,email adress, telephone number,\nBranch Or Store, type of employee)
+        activate CTRL
+
+
+            activate CTRL
+
+
+                CTRL -> PLAT : getBranchesRepository()
+                activate PLAT
+
+                    PLAT -> CTRL : BranchesRepository
+                deactivate PLAT
+
+                CTRL -> TaskCategoryRepository : getBranchesList()
+                activate TaskCategoryRepository
+
+
+            |||
+
+            alt typeOfEmployee == System Administrator or Network Manager
+
+                    TaskCategoryRepository --> branch : createEmployee()
+
+
+
+
+
+                alt typeOfEmployee == StoreManager or Agent
+
+                    TaskCategoryRepository --> branch : getStoresList()
+                    activate branch
+                    branch --> TaskCategoryRepository : StoresList
+                    deactivate branch
+
+                    TaskCategoryRepository --> store : createEmployee()
+
+
+
+                end
+
+            end
+
+
+            TaskCategoryRepository -> CTRL : employee
+            deactivate TaskCategoryRepository
+
+
+
+            |||
+
+
+            CTRL --> UI: employee
+
+            deactivate CTRL
+            UI --> ADM: displays operation success
+    deactivate UI
+
+deactivate ADM
+
+@enduml

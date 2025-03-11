@@ -1,0 +1,85 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+'skinparam linetype orto
+
+
+'left to right direction
+
+
+class SimpleRegression {
+- apache.SimpleRegression
+}
+
+class MultiLinearRegression {
+- OLSMultipleLinearRegression
+}
+
+
+
+class PropertySold {
+- int paidAmout
+- Property property
+}
+
+
+class Repositories {
+    - Repositories()
+    + getInstance() : Repositories
+    + getPropertySoldRepository()
+}
+
+class RegressionController {
+    + Controller()
+}
+
+
+class RegressionUI{
+}
+
+
+class PropertySoldMapper {
++ toDTO(propertySold) : PropertySoldDTO
++ toDomain((propertySoldDTO) : PropertySold
+}
+
+class PropertySoldDTO {
++ int paidAmout
++ PropertyDTO property
+}
+
+class PropertySoldRepository {
++ getPropertySoldDTOlist() : List<PropertySoldDTO>
+}
+
+class DataColector {
++ getAreaData() : double[][]
++ getDistanceData() : double[][]
++ getBedroomData() : double[][]
++ getBathroomData() : double[][]
++ getParkingData() : double[][]
++ getIndependentData() : double[][]
++ getDependentData() : double[]
+- getListAndFilter() : List<PropertySoldDTO>
+}
+
+RegressionUI -> RegressionController
+RegressionController ..> DataColector
+RegressionController ..> SimpleRegression
+RegressionController ..> MultiLinearRegression
+
+DataColector ..> Repositories
+DataColector ..> PropertySoldRepository
+
+
+Repositories -> Repositories : instance
+Repositories --> "1" PropertySoldRepository
+
+PropertySoldRepository --> "0..*" PropertySold
+PropertySoldRepository ..> PropertySoldMapper
+PropertySoldMapper ..> PropertySold
+PropertySoldMapper ..> PropertySoldDTO
+
+@enduml

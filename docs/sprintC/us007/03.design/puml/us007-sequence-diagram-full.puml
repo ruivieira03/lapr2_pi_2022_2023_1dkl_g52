@@ -1,0 +1,121 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Unregistered User" as URU
+participant ":RegistrationUI" as UI
+participant ":RegistrationController" as RC
+participant ":Repositories" as Rep
+participant "repositories\n:Repositories" as rep
+
+
+
+
+participant "clientsRepository\n:ClientsRepository" as CR
+
+participant "client\n:Client" as client
+participant "AuthenticationRepository" as AR
+participant "AuthFacade" as AF
+
+
+
+activate URU
+
+        URU -> UI : Search's to get registered
+
+        activate UI
+
+'            UI --> ADM : requests data (reference, description,  informal \n description, technical description, duration, cost)
+            'create CTRL
+            UI -> RC** : create()
+            activate RC
+
+            RC -> Rep : getInstance()
+                            activate Rep
+
+                                Rep --> RC: repositories
+                                deactivate RC
+                            deactivate Rep
+            UI --> URU : Requests data(name,citizenCardNumber, taxNumber\n address, emailAddress, telephoneNumber,password)
+deactivate UI
+URU -> UI : Types data(name,citizenCardNumber, taxNumber\n address, emailAddress, telephoneNumber, password)
+activate UI
+
+UI -> RC : createClient(name,citizenCardNumber, taxNumber\n address, emailAddress, telephoneNumber, password)
+activate RC
+
+RC -> rep :getAuthenticationRepository()
+
+activate rep
+
+rep --> RC : authenticationRepository
+deactivate rep
+
+deactivate Rep
+ RC -> AR : addUser(emailAddress,name,password)
+                activate AR
+
+                AR -> AF : addUser(emailAddress,name,password)
+                activate AF
+
+                AF -->AR : true/false
+                deactivate AF
+                AR --> RC : true/false
+                deactivate AR
+
+
+               RC -> rep : getClientsRepository()
+               activate rep
+
+               rep--> RC : ClientsRepository
+
+               deactivate rep
+
+
+                deactivate Rep
+
+               RC -> CR : createClient(name,citizenCardNumber, taxNumber\n address, emailAddress, telephoneNumber)
+                activate CR
+
+                CR -> client**: createClient(name,citizenCardNumber, taxNumber\n address, emailAddress, telephoneNumber)
+
+                activate client
+                client->client:isValid(name,citizenCardNumber, taxNumber\n address, emailAddress, telephoneNumber)
+                activate client
+
+                deactivate client
+
+                deactivate client
+
+                CR -> CR : addClient(client)
+                activate CR
+                CR-> CR: isValid(client)
+                activate CR
+                loop for each client
+                CR ->client : equals(client)
+                activate client
+
+                client --> CR : true/false
+                deactivate client
+                end
+
+                CR-->CR :true/false
+                deactivate CR
+                CR--> CR : true/false
+                deactivate CR
+                CR--> RC : true/false
+                deactivate CR
+
+                deactivate CR
+
+
+
+
+                RC --> UI : true/false
+                UI-->URU :displays (in)success of operation
+
+@enduml

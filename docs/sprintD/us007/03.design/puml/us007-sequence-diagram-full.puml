@@ -1,0 +1,153 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Unregistered User" as URU
+participant ":RegistrationUI" as UI
+participant ":RegistrationController" as CTRL
+participant ":Repositories" as Rep
+participant "repositories\n:Repositories" as rep
+participant "ClientDTO" as ClientDTO
+
+participant "clientsRepository\n:ClientsRepository" as CR
+
+participant "client\n:Client" as Client
+participant "AuthenticationRepository" as AR
+participant "AuthFacade" as AF
+
+participant "ClientMapper" as ClientMapper
+participant "EmployeeMapper" as EmployeeMapper
+participant "UserMapper" as UserMapper
+
+
+
+
+
+activate URU
+
+        URU -> UI : Search's to get registered
+
+        activate UI
+
+'            UI --> ADM : requests data (reference, description,  informal \n description, technical description, duration, cost)
+            'create CTRL
+            UI -> CTRL** : create()
+            activate CTRL
+
+            CTRL -> Rep : getInstance()
+                            activate Rep
+
+                                Rep --> CTRL: repositories
+                                deactivate CTRL
+                            deactivate Rep
+            UI --> URU : Requests data(name,citizenCardNumber, taxNumber\n address, emailAddress, telephoneNumber,password)
+deactivate UI
+URU -> UI : Types data(name,citizenCardNumber, taxNumber\n address, emailAddress, telephoneNumber, password)
+activate UI
+
+UI -> CTRL : createClient(name,citizenCardNumber, taxNumber\n address, emailAddress, telephoneNumber, password)
+activate CTRL
+
+CTRL -> rep :getAuthenticationRepository()
+
+activate rep
+
+rep --> CTRL : authenticationRepository
+deactivate rep
+
+deactivate Rep
+ CTRL -> AR : addUserWithRole(emailAddress,name,password)
+                activate AR
+
+                AR -> AF : addUser(emailAddress,name,password)
+                activate AF
+
+                AF -->AR : true/false
+                deactivate AF
+                AR --> CTRL : true/false
+                deactivate AR
+
+
+               CTRL -> rep : getClientsRepository()
+               activate rep
+
+               rep--> CTRL : ClientsRepository
+
+               deactivate rep
+
+
+                deactivate Rep
+
+                CTRL -> CR : createClient(name,citizenCardNumber, taxNumber\n address, emailAddress, telephoneNumber)
+                activate CR
+
+                CR -> UserMapper : toDomain()
+                activate UserMapper
+
+                UserMapper -> ClientMapper : toDomain()
+                activate ClientMapper
+
+                ClientMapper -> UserMapper : clientMapper
+                deactivate ClientMapper
+
+                UserMapper -> EmployeeMapper : toDomain()
+                activate EmployeeMapper
+
+                EmployeeMapper --> UserMapper : employeeMapper
+                deactivate EmployeeMapper
+
+                UserMapper --> CR : userMapper
+                deactivate UserMapper
+
+                CR -> Client : addClient ()
+                activate Client
+
+                Client -> Client : isValid(name,citizenCardNumber, taxNumber\n address, emailAddress, telephoneNumber)
+                activate Client
+
+                Client --> CR : client validated: local validation
+                deactivate Client
+
+                deactivate Client
+
+                CR -> CR : addClient(client)
+                activate CR
+
+                CR-> CR: isValid(client)
+                activate CR
+
+                loop for each Client
+
+                CR ->Client : equals(client)
+                activate Client
+
+                Client --> CR : true/false
+                deactivate Client
+
+                end
+
+                CR-->CR :true/false
+                deactivate CR
+
+                CR--> CR : true/false
+                deactivate CR
+
+                CR--> CTRL : true/false
+                deactivate CR
+
+                deactivate CR
+
+                CTRL --> UI : true/false
+                deactivate CTRL
+
+                UI --> URU :displays (in)success of operation
+                deactivate UI
+
+                deactivate URU
+
+
+@enduml

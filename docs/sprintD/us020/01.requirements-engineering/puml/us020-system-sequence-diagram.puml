@@ -1,0 +1,53 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+title System Sequence Diagram - US020
+autonumber
+
+activate client
+
+    client -> System : read appointement request
+
+        activate System
+
+            System -> client : ask to select Notification
+
+        deactivate System
+
+    client -> System : select notification
+
+        activate System
+
+            System -> client : Accept or Decline Appointement
+
+        deactivate System
+
+alt
+
+    client -> System : aceppt appointement
+
+        activate System
+
+            System -> client : "Your appointement is scheduled"
+
+        deactivate System
+
+else
+
+    client -> System : decline appointement
+
+        activate System
+
+            System -> client : write the reason of declining
+
+        deactivate System
+
+    client -> System : reason
+
+        activate System
+
+            System -> client : "Operation Sucess"
+
+        deactivate System
+end
+deactivate client
+@enduml

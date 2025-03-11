@@ -1,0 +1,56 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class NetworkStoresSplitUI {
+}
+
+class NetworkStoresSplitController {
+  +NetworkStoresSplit()
+}
+class Repositories {
+ +getStoreRepository()
+}
+
+class StoreRepository{
+ +getStoresList()
+}
+
+class Store{
+    -ID
+    -address
+    -Name
+    -Email
+    -PhoneNumber
+    -Property
+    -PropertyCount
+
+    +getID()
+    +getAddress()
+    +getName()
+    +getEmail()
+    +getPhoneNumber()
+    +getProperty()
+    +getPropertyCount
+}
+
+class StoreDTO {
+}
+
+class SplitStoreListAlgorithms{
+-bestOption
++splitStoreListInTwo(storesList)
+}
+
+NetworkStoresSplitUI --> NetworkStoresSplitController
+
+NetworkStoresSplitController --> Repositories
+
+StoreRepository --> Store : knows >
+
+StoreRepository --> StoreDTO : has
+
+Repositories --> StoreRepository
+
+NetworkStoresSplitController -> SplitStoreListAlgorithms
+
+@enduml

@@ -1,0 +1,138 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+'skinparam linetype orto
+
+'left to right direction
+
+class Repositories {
+- Repositories
++ getInstance() : Repositories
++ getPropertySaleRepository()
+}
+
+class PropertySaleRepository{
++ ListProperties(short sortCriteria)
++ ListProperties(short sortCriteria, short propertyBusiness, short propertyType, int numberOfRooms)
+}
+
+note left of PropertySaleRepository
+    Used for storing and displaying
+    the properties list
+end note
+
+class ListPropertiesController {
+    + ListPropertiesController()
+    + ListProperties(short sortCriteria)
+    + ListProperties(short sortCriteria, short propertyBusiness, short propertyType, int numberOfRooms)
+}
+
+class PropertySaleRequest{
+- int typeOfBusiness
+- float requestedPrice
++ SortByCity()
+}
+
+
+class ListPropertiesUI {
+}
+
+class PropertySale {
+- int typeOfComission
+- float commission
+
++ SortByPrice()
++ calculatePrice()
+}
+
+note left of PropertySale
+    Used for categorize
+    the properties that
+    were already accepted
+    in the application
+end note
+
+abstract class Property {
+- float area
+- String street
+- String zipCode
+- float distanceFromCityCenter
+
+}
+
+class Land {
+
+}
+
+class City{
+- String name
+}
+
+abstract class ResidentialProperty {
+- numberOfBedrooms
+- numberOfBathrooms
+- numerOfParkingSpaces
+- availableEquipment
+}
+
+class Apartment {
+ListPropertiesUI .> ListPropertiesController
+
+ListPropertiesController ..> Repositories
+ListPropertiesController ..> PropertySaleRepository
+
+Repositories --> "1" PropertySaleRepository : PropertySaleRepository
+
+PropertySaleRepository --> "*" PropertySale
+
+Repositories --> Repositories : instance
+
+ResidentialProperty --up|> Property
+Land --up|> Property
+Apartment --up|> ResidentialProperty
+House --up|> ResidentialProperty
+
+
+ListPropertiesController ..> PropertySale
+
+Property--> "1" City
+
+PropertySale --|> PropertySaleRequest
+
+PropertySaleRequest --> "1" Property
+}
+
+class House {
+- existanceOfBasement
+- existanceOfInhabitableLoft
+- sunExposure
+}
+
+ListPropertiesUI .> ListPropertiesController
+
+ListPropertiesController ..> Repositories
+ListPropertiesController ..> PropertySaleRepository
+
+Repositories --> "1" PropertySaleRepository : PropertySaleRepository
+
+PropertySaleRepository --> "*" PropertySale
+
+Repositories --> Repositories : instance
+
+ResidentialProperty --up|> Property
+Land --up|> Property
+Apartment --up|> ResidentialProperty
+House --up|> ResidentialProperty
+
+
+ListPropertiesController ..> PropertySale
+
+Property--> "1" City
+
+PropertySale --|> PropertySaleRequest
+
+PropertySaleRequest --> "1" Property
+
+@enduml

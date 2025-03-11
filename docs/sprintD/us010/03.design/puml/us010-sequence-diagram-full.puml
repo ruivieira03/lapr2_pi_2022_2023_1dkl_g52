@@ -1,0 +1,191 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+actor "Owner" as Owner
+participant ":PurchaseRequestUI" as UI
+participant ":PurchaseRequestController" as CTRL
+participant ":Repositories" as R
+participant ":Repositories\nrepositories" as rep
+participant "PurchaseRequestRepository\n:PurchaseRequestRepository" as PurchaseRequestRepository
+participant ":PurchaseRequest\nPurchaseRequest" as PurchaseRequest
+participant ":ApplicationSession" as ASP
+participant ":applicationSession\nApplicationSession" as asp
+participant ":currentSession\nUserSession" as CS
+participant ":clientRepository\nClientRepository" as ClientRepository
+participant ":propertySaleRepository\nPropertySaleRepository" as PropertySaleRepository
+participant "PurchaseRequestDTO" as PurchaseRequestDTO
+participant "PurchaseRequestMapper" as PurchaseRequestMapper
+
+activate Owner
+
+Owner -> UI : Selects to Purchase \n a property
+activate UI
+
+UI -> CTRL ** : creates
+UI --> Owner : asks to select which property from the \n previous list he pretends to purchase
+deactivate UI
+
+Owner -> UI : selects property
+activate UI
+
+UI -> CTRL : getPropertySaleList(sortCriteria)
+activate CTRL
+
+CTRL ->PropertySaleRepository : listProperties(sortCriteria)
+activate PropertySaleRepository
+
+PropertySaleRepository --> CTRL : PropertySaleList
+deactivate PropertySaleRepository
+
+CTRL --> UI : PropertySaleList
+deactivate CTRL
+
+
+UI --> Owner : asks order amount
+deactivate UI
+
+Owner -> UI : Gives order amount
+activate UI
+
+UI -> CTRL : createPurchaseRequest(propertySale,orderAmount)
+activate CTRL
+
+CTRL -> CTRL : getClient()
+activate CTRL
+
+CTRL -> R : getInstance()
+activate R
+
+R--> CTRL : repositories
+deactivate R
+
+CTRL -> ASP : getInstance()
+activate ASP
+
+ASP --> CTRL : appSession
+deactivate ASP
+
+CTRL -> asp : getCurrentSession()
+activate asp
+
+asp --> CTRL : currentSession
+deactivate asp
+
+CTRL -> CS : getUserID()
+activate CS
+
+CS --> CTRL : email
+deactivate CS
+
+CTRL -> R : getClientRepository
+activate R
+
+R --> CTRL : clientRepositories
+deactivate R
+
+CTRL -> PurchaseRequestDTO : create
+activate PurchaseRequestDTO
+
+PurchaseRequestDTO --> CTRL : dtos
+deactivate PurchaseRequestDTO
+
+CTRL -> ClientRepository : getClientFromEmail(email)
+activate ClientRepository
+
+loop for each client
+
+ClientRepository -> Client : hasEmail(email)
+activate Client
+
+Client --> ClientRepository : true/false
+deactivate Client
+
+end loop
+
+deactivate Client
+
+ClientRepository --> CTRL : client
+deactivate ClientRepository
+
+CTRL --> CTRL : client
+deactivate CTRL
+
+deactivate CS
+CTRL -> R : getPurchaseRequestRepository()
+activate R
+
+R -> rep : getPurchaseRequestRepository()
+activate rep
+
+rep --> R : purchaseRequestRepository
+deactivate rep
+
+R --> CTRL : purchaseRequestRepository
+deactivate R
+
+CTRL -> PurchaseRequestRepository : createPurchaseRequest(propertySale,OrderAmount,client)
+activate PurchaseRequestRepository
+
+PurchaseRequestRepository -> PurchaseRequestMapper : create
+activate PurchaseRequestMapper
+
+PurchaseRequestMapper -> PurchaseRequest : getPropertySaleFromID()
+activate PurchaseRequest
+
+PurchaseRequest --> PurchaseRequestMapper : propertySale
+deactivate PurchaseRequest
+
+PurchaseRequestMapper -> PropertySaleRepository : getClientFromEmail()
+activate PropertySaleRepository
+
+PropertySaleRepository --> PurchaseRequestMapper : client
+deactivate PropertySaleRepository
+
+PurchaseRequestMapper --> PurchaseRequestRepository : client and property
+deactivate PurchaseRequestMapper
+
+PurchaseRequestRepository -> PurchaseRequest ** : create(propertySale,OrderAmount,client)
+activate PurchaseRequest
+
+PurchaseRequest -> PurchaseRequest : isValid()
+activate PurchaseRequest
+
+deactivate PurchaseRequest
+
+deactivate PurchaseRequest
+
+PurchaseRequestRepository -> PurchaseRequestRepository : addPurchaseRequest()
+activate PurchaseRequestRepository
+
+PurchaseRequestRepository -> PurchaseRequestRepository : isValid(purchaseRequest)
+activate PurchaseRequestRepository
+
+loop for each purchase request
+
+PurchaseRequestRepository -> PurchaseRequestRepository : equals(purchaseRequest)
+activate PurchaseRequestRepository
+
+PurchaseRequestRepository --> PurchaseRequestRepository : true/false
+deactivate PurchaseRequestRepository
+
+end loop
+
+PurchaseRequestRepository --> PurchaseRequestRepository : true/false
+deactivate PurchaseRequestRepository
+
+PurchaseRequestRepository --> PurchaseRequestRepository : true/false
+deactivate PurchaseRequestRepository
+
+PurchaseRequestRepository --> CTRL : true/false
+deactivate PurchaseRequestRepository
+
+CTRL --> UI : true/false
+deactivate CTRL
+
+UI --> Owner : (in)Success of Operation
+deactivate UI
+
+deactivate Owner
+@enduml

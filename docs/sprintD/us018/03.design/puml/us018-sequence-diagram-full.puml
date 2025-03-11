@@ -1,0 +1,342 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Network Manager" as Manager
+participant "RegressionUI" as UI
+participant "RegressionController" as Controller
+participant "SimpleRegression" as SimpleRegression
+participant "org.apache.commons.\nmath3.stat.regression.\nSimpleRegression" as sr
+participant MultinearRegression
+participant "org.apache.commons.\nmath3.stat.regression.\nOLSMultipleLinearRegression" as mr
+
+activate Manager
+
+    Manager -> UI : asks to study deals made
+    activate UI
+        UI -> Controller** : create()
+
+        UI --> Manager : shows Regression types
+    deactivate UI
+
+    Manager -> UI : selects Regression Type
+    activate UI
+
+        opt selects Linear Regression
+            UI --> Manager : shows indpendent variables
+        deactivate UI
+
+        Manager -> UI : selects indpendent variables
+        activate UI
+
+            UI -> Controller : simpleRegression()
+            activate Controller
+
+                Controller -> SimpleRegression** : create()
+                activate SimpleRegression
+
+                    SimpleRegression -> sr** : create()
+                deactivate SimpleRegression
+
+
+                opt selects area
+
+                    Controller -> DataCollector : getAreaData()
+                    activate DataCollector
+
+                        DataCollector -> DataCollector : getAndFilterList()
+                        activate DataCollector
+
+                            DataCollector -> Repositories : getPropertySoldRepository()
+                            activate Repositories
+
+                                Repositories --> DataCollector : PropertySoldRepository
+                            deactivate Repositories
+
+                            DataCollector -> PropertySoldRepository : getPropertySoldDTOList
+                            activate PropertySoldRepository
+
+                                loop for each propertySold
+                                    PropertySoldRepository -> PropertySoldMapper : toDTO(propertySold)
+                                    activate PropertySoldMapper
+                                        PropertySoldMapper -> PropertySoldDTO** : create
+                                    deactivate PropertySoldMapper
+
+                                end
+
+                                PropertySoldRepository --> DataCollector : list<PropertySoldDTO>
+                            deactivate PropertySoldRepository
+
+                            DataCollector --> DataCollector : list<PropertySoldDTO>
+                        deactivate DataCollector
+
+                        DataCollector --> Controller : double[][]
+                    deactivate DataCollector
+                else selects distance from City center
+
+                   Controller -> DataCollector : getDistanceData()
+                   activate DataCollector
+
+                       DataCollector -> DataCollector : getAndFilterList()
+                       activate DataCollector
+
+                           DataCollector -> Repositories : getPropertySoldRepository()
+                           activate Repositories
+
+                               Repositories --> DataCollector : propertySoldRepository
+                           deactivate Repositories
+
+                           note right
+                               logic hiden
+                               (refer to steps 14 to 17)
+                           end note
+
+                           DataCollector --> DataCollector : list<PropertySoldDTO>
+                       deactivate DataCollector
+
+                       DataCollector --> Controller : double[][]
+                   deactivate DataCollector
+
+                else selects number of bedrooms
+                    Controller -> DataCollector : getBedroomData()
+                    activate DataCollector
+
+                        DataCollector -> DataCollector : getAndFilterList()
+                        activate DataCollector
+
+                            DataCollector -> Repositories : getPropertySoldRepository()
+                            activate Repositories
+
+                                Repositories --> DataCollector : propertySoldRepository
+                            deactivate Repositories
+
+                            note right
+                               logic hiden
+                               (refer to steps 14 to 17)
+                           end note
+
+                            DataCollector --> DataCollector : list<PropertySoldDTO>
+                        deactivate DataCollector
+
+                        DataCollector --> Controller : double[][]
+                    deactivate DataCollector
+
+                else selects number of bathrooms
+                    Controller -> DataCollector : getBathroomData()
+                    activate DataCollector
+
+                        DataCollector -> DataCollector : getAndFilterList()
+                        activate DataCollector
+
+                            DataCollector -> Repositories : getPropertySoldRepository()
+                            activate Repositories
+
+                                Repositories --> DataCollector : propertySoldRepository
+                            deactivate Repositories
+
+                            note right
+                                logic hiden
+                                (refer to steps 14 to 17)
+                            end note
+
+                            DataCollector --> DataCollector : list<PropertySoldDTO>
+                        deactivate DataCollector
+
+                        DataCollector --> Controller : double[][]
+                    deactivate DataCollector
+
+                else selects number of bathrooms
+                    Controller -> DataCollector : getBathroomData()
+                    activate DataCollector
+
+                        DataCollector -> DataCollector : getAndFilterList()
+                        activate DataCollector
+
+                            DataCollector -> Repositories : getPropertySoldRepository()
+                            activate Repositories
+
+                                Repositories --> DataCollector : propertySoldRepository
+                            deactivate Repositories
+
+                            note right
+                                logic hiden
+                                (refer to steps 14 to 17)
+                            end note
+
+                            DataCollector --> DataCollector : list<PropertySoldDTO>
+                        deactivate DataCollector
+
+                        DataCollector --> Controller : double[][]
+                    deactivate DataCollector
+
+                else selects number of parking spaces
+                    Controller -> DataCollector : getParkingData()
+                    activate DataCollector
+
+                        DataCollector -> DataCollector : getAndFilterList()
+                        activate DataCollector
+
+                            DataCollector -> Repositories : getPropertySoldRepository()
+                            activate Repositories
+
+                                Repositories --> DataCollector : propertySoldRepository
+                            deactivate Repositories
+
+                            note right
+                                logic hiden
+                                (refer to steps 14 to 17)
+                            end note
+
+                            DataCollector --> DataCollector : list<PropertySoldDTO>
+                        deactivate DataCollector
+
+                        DataCollector --> Controller : double[][]
+                    deactivate DataCollector
+
+                end
+
+                    Controller -> SimpleRegression : loadData(data)
+                    activate SimpleRegression
+
+                        SimpleRegression -> sr : loadData(data)
+                        activate sr
+                            sr --> SimpleRegression : boolean
+                        deactivate sr
+                    deactivate SimpleRegression
+
+                    Controller -> SimpleRegression : getData()
+                    activate SimpleRegression
+
+                        SimpleRegression -> sr : getN()
+                        activate sr
+
+                            sr --> SimpleRegression : int
+                        deactivate sr
+
+                        SimpleRegression -> sr : getRSquared()
+                        activate sr
+
+                            sr --> SimpleRegression : double()
+                        deactivate sr
+
+                        SimpleRegression -> sr : getIntersection()
+                        activate sr
+
+                            sr --> SimpleRegression : double
+                        deactivate sr
+
+                        SimpleRegression -> sr : getSlope()
+                        activate sr
+
+                            sr --> SimpleRegression : double
+                        deactivate sr
+
+                        SimpleRegression --> Controller : data
+                    deactivate SimpleRegression
+
+                    Controller --> UI : data
+                deactivate Controller
+        else selects multilinear Regression
+
+            UI -> Controller : mutilinearRegression()
+            activate Controller
+
+                Controller -> MultinearRegression**
+                activate MultinearRegression
+
+                    MultinearRegression -> mr** : create()
+                deactivate MultinearRegression
+
+                Controller -> DataCollector : independentData()
+                activate DataCollector
+
+                    DataCollector -> DataCollector : getAndFilterList()
+                    activate DataCollector
+
+                        DataCollector -> Repositories : getPropertySoldRepository()
+                        activate Repositories
+
+                            Repositories --> DataCollector : propertySoldRepository
+                        deactivate Repositories
+
+                        note right
+                            logic hiden
+                            (refer to steps 14 to 17)
+                        end note
+
+                        DataCollector --> DataCollector : list<PropertySoldDTO>
+                    deactivate DataCollector
+
+                    DataCollector --> Controller : double[][]
+                deactivate DataCollector
+
+                Controller -> DataCollector : dependentData()
+                activate DataCollector
+
+                    DataCollector -> DataCollector : getAndFilterList()
+                    activate DataCollector
+
+                        DataCollector -> Repositories : getPropertySoldRepository()
+                        activate Repositories
+
+                            Repositories --> DataCollector : propertySoldRepository
+                        deactivate Repositories
+
+                        DataCollector --> DataCollector : list<PropertySoldDTO>
+                    deactivate DataCollector
+
+                    DataCollector --> Controller : double[]
+                deactivate DataCollector
+
+                Controller -> MultinearRegression : loadData(independentData, dependentData)
+                activate MultinearRegression
+
+                    MultinearRegression -> mr : newSampleData(independentData, dependentData)
+                    activate mr
+
+                        mr --> MultinearRegression : boolean
+                    deactivate mr
+                deactivate MultinearRegression
+
+                Controller -> MultinearRegression : getData()
+                activate MultinearRegression
+
+                    MultinearRegression -> mr : getN()
+                    activate mr
+
+                        mr --> MultinearRegression : int
+                    deactivate mr
+
+                    MultinearRegression -> mr : getRSquared()
+                    activate mr
+
+                        mr --> MultinearRegression : double()
+                    deactivate mr
+
+                    MultinearRegression -> mr : getIntersection()
+                    activate mr
+
+                        mr --> MultinearRegression : double
+                    deactivate mr
+
+                    MultinearRegression -> mr : getSlope()
+                    activate mr
+
+                        mr --> MultinearRegression : double
+                    deactivate mr
+
+                    MultinearRegression --> Controller : data
+                deactivate MultinearRegression
+
+                Controller --> UI : data
+            deactivate Controller
+        end
+
+        UI --> Manager : shows result data
+    deactivate UI
+deactivate Manager
+
+@enduml

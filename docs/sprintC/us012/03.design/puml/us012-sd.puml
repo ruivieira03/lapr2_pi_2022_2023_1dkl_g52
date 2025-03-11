@@ -1,0 +1,133 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+title US012 - Import Legacy Data
+
+actor "Administrator" as adm
+participant ":ImportDataUI" as ui
+participant ":ImportDataController" as ctrl
+participant ":Repositories" as repo
+participant ":ImportFileReader" as freader
+participant ":ClientDTO" as clientDTO
+participant ":StoreNetworkDTO" as storeDTO
+participant ":PropertyDTO" as propertyDTO
+participant ":PropertySoldDTO" as propertySoldDTO
+participant ":LocationRepository" as lrepo
+participant ":Location" as loc
+participant ":ClientRepository" as crepo
+participant ":ClientMapper" as cmapper
+participant ":Client" as client
+participant ":StoreNetworkRepository" as srepo
+participant ":StoreNetworkMapper" as smapper
+participant ":StoreNetwork" as store
+participant ":PropertyRepository" as prepo
+participant ":PropertySoldMapper" as psoldmapper
+participant ":PropertySold" as psold
+participant ":PropertyMapper" as pmapper
+participant ":Property" as prop
+
+activate adm
+adm -> ui : asks to import legacy data
+activate ui
+ui -> ctrl** : create
+    activate ctrl
+
+        ctrl -> repo : repo = getInstance()
+        activate repo
+        deactivate repo
+
+        ctrl -> repo : locationRepo = getLocationsRepository()
+        activate repo
+        deactivate repo
+
+        ctrl -> repo : storeNetRepo = getStoreNetworkRepository()
+        activate repo
+        deactivate repo
+
+        ctrl -> repo : propertySoldRepo = getPropertySoldRepository()
+        activate repo
+        deactivate repo
+
+        ctrl -> repo : clientRepo = getClientRepository()
+        activate repo
+        deactivate repo
+
+
+        deactivate ctrl
+adm <-- ui : asks for file path
+deactivate ui
+adm -> ui : provides file path
+activate ui
+adm <-- ui : asks to confirm file
+deactivate ui
+adm -> ui : confirms file
+activate ui
+ui -> ui : validateFilePath(filePath)
+ui -> ctrl : importData(filePath)
+    activate ctrl
+    ctrl -> freader : readLocation(filePath)
+        activate freader
+        freader --> ctrl : locationList
+        deactivate freader
+    ctrl -> freader : readClientData(filePath)
+        activate freader
+            freader -> clientDTO** : create
+        freader --> ctrl : clientDTO
+        deactivate freader
+    ctrl -> freader : readStoreData(filePath)
+        activate freader
+            freader -> storeDTO** : create
+        freader --> ctrl : storeDTO
+        deactivate freader
+    ctrl -> freader : readPropertyData(filePath)
+        activate freader
+            freader -> propertyDTO** : create
+        freader --> ctrl : propertyDTO
+        deactivate freader
+    ctrl -> freader : readPropertySoldData(filePath)
+        activate freader
+            freader -> propertySoldDTO** : create
+        freader --> ctrl : propertySoldDTO
+        deactivate freader
+
+    ctrl -> lrepo : addLocationsThroughData(locationList)
+        activate lrepo
+            lrepo -> loc** : create
+        lrepo --> ctrl : locationList
+        deactivate lrepo
+    ctrl -> crepo : addClientsThroughData(clientDTO)
+        activate crepo
+            crepo -> cmapper : toDomain(clientDTO)
+                activate cmapper
+                cmapper -> client** : create
+                deactivate cmapper
+        crepo --> ctrl : clientList
+        deactivate crepo
+    ctrl -> srepo : addStoreNetworkThroughData(storeDTO, locationList)
+        activate srepo
+            srepo -> smapper : toDomain(storeDTO)
+                activate smapper
+                smapper -> store** : create
+                deactivate smapper
+        srepo --> ctrl : storeList
+        deactivate srepo
+    ctrl -> prepo : addPropertiesSoldThroughData(propertySoldDTO, propertyDTO, clientList)
+        activate prepo
+            prepo -> psoldmapper : toDomain(propertySoldDTO)
+                activate psoldmapper
+                psoldmapper -> psold** : create
+                deactivate psoldmapper
+            psold -> pmapper : toDomain(propertyDTO)
+                activate pmapper
+                pmapper -> prop** : create
+                deactivate pmapper
+        prepo --> ctrl : propertySoldList
+        deactivate prepo
+
+    ctrl --> ui : operationSuccess
+
+adm <-- ui : informs of operation (in)success
+
+@enduml

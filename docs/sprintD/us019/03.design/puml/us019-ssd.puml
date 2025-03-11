@@ -1,0 +1,88 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+participant "Network Manager" as NetworkManager
+
+participant "NetworkStoresSplitUI" as UI
+participant "NetworkStoresSplitController" as Controller
+participant "Repositories" as rep
+participant "StoreRepository" as SR
+participant "Store" as store
+participant "SplitStoreListAlgorithms" as algorithm
+participant "StoreDTO" as StoreDTO
+
+activate NetworkManager
+
+    NetworkManager -> UI : Selects to split his stores in two Lists
+
+    activate UI
+
+        UI ->  Controller** : creates
+        UI ->  Controller : NetworkStoresSplit()
+        activate Controller
+        Controller -> rep : getInstance()
+        activate rep
+        rep --> Controller : Repositories
+        deactivate rep
+        Controller -> rep : getStoresRepository()
+        activate rep
+        rep -> SR : getStoresRepository()
+        activate SR
+        SR --> rep : storesRepository
+        deactivate SR
+        rep --> Controller : storesRepository
+        deactivate rep
+
+        Controller -> SR : getSortedStoreList()
+        activate SR
+
+        SR -> StoreDTO : toString()
+        activate StoreDTO
+
+        StoreDTO --> SR : storesDTO
+        deactivate StoreDTO
+
+        SR --> Controller : storesDTO
+        deactivate SR
+
+        Controller -> algorithm** : splitStoreListInTwo(storesDTO)
+        activate algorithm
+
+        algorithm -> algorithm : splitList(storesList)
+
+        loop For every combination possible
+
+        algorithm -> algorithm : permuteSubLists(storesLists, storesList.size())
+        activate algorithm
+
+        algorithm -> algorithm : evaluateList(storesLists)
+        activate algorithm
+
+        algorithm -> algorithm : calculateStoreListsPropertiesDifference(storesList)
+        activate algorithm
+
+        algorithm -> algorithm : getNumberOfElements(storeList)
+        deactivate algorithm
+
+        algorithm -> algorithm : swap(storesList,element1,element2)
+        deactivate algorithm
+
+        algorithm -> algorithm : bestOption
+        deactivate algorithm
+
+        end loop
+
+        algorithm --> Controller : splittedList
+        deactivate algorithm
+
+        Controller --> UI : splittedList
+        deactivate Controller
+
+        UI --> NetworkManager : Displays each subList
+        deactivate UI
+
+        deactivate NetworkManager
+
+@enduml

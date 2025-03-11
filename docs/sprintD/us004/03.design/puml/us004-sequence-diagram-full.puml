@@ -1,0 +1,449 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+actor "Owner" as Owner
+participant ":CreatePropertySaleRequestUI" as UI
+participant ":PropertySaleRequestController" as CTRL
+participant ":PropertySaleRequestController" as CTRL
+participant "Type" as Type
+participant "Utils" as Utils
+participant "LandDTO" as LandDTO
+participant "PropertyDTO" as PropertyDTO
+participant "ApartmentDTO" as ApartmentDTO
+participant "ResidentialPropertyDTO" as ResidentialPropertyDTO
+participant "HouseDTO" as HouseDTO
+participant "StoreRepository" as StoreRepository
+participant "ClientMapper" as ClientMapper
+participant "EmployeeMapper" as EmployeeMapper
+participant "TypesOfBusinesses" as TypesOfBusinesses
+participant "SunExposure" as SunExposure
+participant "PropertySaleRequestRepository" as PropertySaleRequestRepository
+participant "PropertySaleRequestMapper" as PropertySaleRequestMapper
+participant "PropertySaleRequest" as PropertySaleRequest
+participant "PropertyMapper" as PropertyMapper
+
+
+activate Owner
+
+Owner-> UI : asks to make a request
+activate UI
+UI -> CTRL** : create()
+activate CTRL
+
+CTRL --> UI : controller()
+deactivate CTRL
+
+UI -> Type : values
+activate Type
+
+Type --> UI : values
+deactivate Type
+
+UI -> Utils : showAndSelectOne()
+activate Utils
+
+Utils -> Utils : showList()
+activate Utils
+
+Utils -> Utils : selectObject()
+activate Utils
+
+Utils -> Utils : readLineFromConsole()
+activate Utils
+
+deactivate Utils
+deactivate Utils
+deactivate Utils
+
+Utils --> UI : type
+deactivate Utils
+
+UI -> LandDTO : create
+activate LandDTO
+
+LandDTO -> PropertyDTO : create
+activate PropertyDTO
+
+PropertyDTO --> LandDTO : landDTO
+deactivate PropertyDTO
+
+LandDTO --> UI :landDTO
+deactivate LandDTO
+
+UI -> ApartmentDTO : create
+activate ApartmentDTO
+
+ApartmentDTO -> ResidentialPropertyDTO : create
+activate ResidentialPropertyDTO
+
+ResidentialPropertyDTO -> PropertyDTO : create
+activate PropertyDTO
+
+PropertyDTO --> ResidentialPropertyDTO : apartmentDTO
+deactivate PropertyDTO
+
+ResidentialPropertyDTO --> ApartmentDTO : apartmentDTO
+deactivate ResidentialPropertyDTO
+
+ApartmentDTO --> UI : apartmentDTO
+deactivate ApartmentDTO
+
+UI -> HouseDTO : create
+activate HouseDTO
+
+HouseDTO -> ResidentialPropertyDTO : create
+activate ResidentialPropertyDTO
+
+ResidentialPropertyDTO -> PropertyDTO : create
+activate PropertyDTO
+
+PropertyDTO --> ResidentialPropertyDTO : houseDTO
+deactivate PropertyDTO
+
+ResidentialPropertyDTO --> HouseDTO : houseDTO
+deactivate ResidentialPropertyDTO
+
+HouseDTO --> UI : houseDTO
+deactivate HouseDTO
+
+UI -> Utils : showAndSelectOne()
+activate Utils
+
+Utils -> Utils : showList()
+activate Utils
+
+Utils -> Utils : selectObject()
+activate Utils
+
+Utils -> Utils : readLineFromConsole()
+activate Utils
+
+deactivate Utils
+deactivate Utils
+deactivate Utils
+
+Utils --> UI : input
+deactivate Utils
+
+UI -> CTRL : getAgentFromStore()
+activate CTRL
+
+CTRL -> StoreRepository :getAgentListFromStore()
+activate StoreRepository
+
+StoreRepository -> StoreRepository : getStore()
+activate StoreRepository
+
+StoreRepository -> UserMapper : toDTO()
+activate UserMapper
+
+UserMapper -> ClientMapper : toDTO()
+activate ClientMapper
+
+ClientMapper -> EmployeeMapper : toDTO()
+activate EmployeeMapper
+
+EmployeeMapper --> ClientMapper : agentFromStore
+deactivate EmployeeMapper
+
+
+ClientMapper --> UserMapper : agentFromStore
+deactivate ClientMapper
+
+UserMapper --> StoreRepository : agentFromStore
+deactivate UserMapper
+deactivate StoreRepository
+
+StoreRepository --> CTRL : agentFromStore
+deactivate StoreRepository
+
+CTRL --> UI : agentFromStore
+deactivate CTRL
+
+UI -> Utils : showAndSelectOne()
+activate Utils
+
+Utils -> Utils : showList()
+activate Utils
+
+Utils -> Utils : selectObject()
+activate Utils
+
+Utils -> Utils : readLineFromConsole()
+activate Utils
+
+deactivate Utils
+deactivate Utils
+deactivate Utils
+
+Utils --> UI : input
+deactivate Utils
+
+UI -> TypesOfBusinesses : values()
+activate TypesOfBusinesses
+
+TypesOfBusinesses --> UI : values
+deactivate TypesOfBusinesses
+
+UI -> Utils : showAndSelectOne()
+activate Utils
+
+Utils -> Utils : showList()
+activate Utils
+
+Utils -> Utils : selectObject()
+activate Utils
+
+Utils -> Utils : readLineFromConsole()
+activate Utils
+
+deactivate Utils
+deactivate Utils
+deactivate Utils
+
+Utils --> UI : input types of business
+deactivate Utils
+
+UI -> Utils : readDoubleFromConsole()
+activate Utils
+
+Utils -> Utils : readLineFromConsole()
+activate Utils
+
+deactivate Utils
+
+Utils --> UI : inputDouble
+deactivate Utils
+
+UI -> Utils : readDoubleFromConsole()
+activate Utils
+
+Utils -> Utils : readLineFromConsole()
+activate Utils
+
+deactivate Utils
+
+Utils --> UI : inputDouble
+deactivate Utils
+
+UI -> Utils : readDoubleFromConsole()
+activate Utils
+
+Utils -> Utils : readLineFromConsole()
+activate Utils
+
+deactivate Utils
+
+Utils --> UI : inputDouble
+deactivate Utils
+
+UI -> Utils : showAndSelectOne()
+activate Utils
+
+Utils -> Utils : showList()
+activate Utils
+
+Utils -> Utils : selectObject()
+activate Utils
+
+Utils -> Utils : readLineFromConsole()
+activate Utils
+
+deactivate Utils
+deactivate Utils
+deactivate Utils
+
+Utils --> UI : input
+deactivate Utils
+
+UI -> Utils : showAndSelectOne()
+activate Utils
+
+Utils -> Utils : showList()
+activate Utils
+
+Utils -> Utils : selectObject()
+activate Utils
+
+Utils -> Utils : readLineFromConsole()
+activate Utils
+
+deactivate Utils
+deactivate Utils
+deactivate Utils
+
+Utils --> UI : input
+deactivate Utils
+
+UI -> Utils : showAndSelectOne()
+activate Utils
+
+Utils -> Utils : showList()
+activate Utils
+
+Utils -> Utils : selectObject()
+activate Utils
+
+Utils -> Utils : readLineFromConsole()
+activate Utils
+
+deactivate Utils
+deactivate Utils
+deactivate Utils
+
+Utils --> UI : input
+deactivate Utils
+
+UI -> Utils : readLineFromConsole()
+activate Utils
+
+Utils --> UI : input
+deactivate Utils
+
+alt property is a ResidentialProperty
+
+UI -> Utils : readIntegerFromConsole()
+activate Utils
+
+Utils -> Utils : readLineFromConsole()
+activate Utils
+
+deactivate Utils
+
+Utils --> UI : inputInteger
+deactivate Utils
+
+UI -> Utils : readIntegerFromConsole()
+activate Utils
+
+Utils -> Utils : readLineFromConsole()
+activate Utils
+
+deactivate Utils
+
+Utils --> UI : inputInteger
+deactivate Utils
+
+UI -> Utils : readIntegerFromConsole()
+activate Utils
+
+Utils -> Utils : readLineFromConsole()
+activate Utils
+
+deactivate Utils
+
+Utils --> UI : inputInteger
+deactivate Utils
+
+else if property is House
+
+UI -> Utils : showAndSelectOne()
+activate Utils
+
+Utils -> Utils : showList()
+activate Utils
+
+Utils -> Utils : selectObject()
+activate Utils
+
+Utils -> Utils : readLineFromConsole()
+activate Utils
+
+deactivate Utils
+deactivate Utils
+deactivate Utils
+
+Utils --> UI : input
+deactivate Utils
+
+UI -> Utils : showAndSelectOne()
+activate Utils
+
+Utils -> Utils : showList()
+activate Utils
+
+Utils -> Utils : selectObject()
+activate Utils
+
+Utils -> Utils : readLineFromConsole()
+activate Utils
+
+deactivate Utils
+deactivate Utils
+deactivate Utils
+
+Utils --> UI : input
+deactivate Utils
+
+UI -> SunExposure : values()
+activate SunExposure
+
+SunExposure --> UI : values
+deactivate SunExposure
+
+UI -> Utils : showAndSelectOne()
+activate Utils
+
+Utils -> Utils : showList()
+activate Utils
+
+Utils -> Utils : selectObject()
+activate Utils
+
+Utils -> Utils : readLineFromConsole()
+activate Utils
+
+deactivate Utils
+deactivate Utils
+deactivate Utils
+
+Utils --> UI : input
+deactivate Utils
+
+end
+
+UI -> CTRL : createSalesRequest()
+activate CTRL
+
+CTRL -> PropertySaleRequestRepository : CreatePropertySaleRequest
+activate PropertySaleRequestRepository
+
+PropertySaleRequestRepository -> PropertySaleRequestMapper : toDomain()
+activate PropertySaleRequestMapper
+
+PropertySaleRequestMapper -> PropertySaleRequest : create
+activate PropertySaleRequest
+
+PropertySaleRequest --> PropertySaleRequestMapper : created
+deactivate PropertySaleRequest
+
+PropertySaleRequestMapper -> PropertyMapper : toDomain()
+activate PropertyMapper
+
+PropertyMapper --> PropertySaleRequestMapper : created
+deactivate PropertyMapper
+
+PropertySaleRequestMapper --> PropertySaleRequestRepository
+deactivate PropertySaleRequestMapper
+
+PropertySaleRequestRepository -> PropertySaleRequestRepository : addPropertySaleRequest()
+activate PropertySaleRequestRepository
+
+PropertySaleRequestRepository -> PropertySaleRequest : isValid()
+activate PropertySaleRequest
+
+PropertySaleRequest --> PropertySaleRequestRepository : validated
+deactivate PropertySaleRequest
+
+PropertySaleRequestRepository --> CTRL : operation result
+deactivate PropertySaleRequestRepository
+
+CTRL --> UI : operation result
+deactivate PropertySaleRequestRepository
+
+UI --> Owner : operation result
+deactivate UI
+
+@enduml

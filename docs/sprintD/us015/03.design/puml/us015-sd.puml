@@ -1,0 +1,120 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title US015 - List booking requests
+
+autonumber
+
+actor Agent as ag
+participant ListVisitRequestUI as ui
+participant ReviewVisitRequestsController as ctrl
+participant Repositories as repos
+participant AuthenticationRepository as authRepo
+participant UserSession as userSession
+participant StoreRepository as srepo
+participant VisitRequestRepository as repo
+participant Utils as utils
+participant Algorithms as alg
+
+
+activate ag
+ag -> ui : asks to list all booking requests
+activate ui
+ui -> ui : requestDates()
+activate ui
+
+ui --> ag : asks for begin date
+
+
+ag --> ui : provides begin date
+ui --> ag : asks for end date
+ag --> ui : provides end date
+ui --> ui
+deactivate ui
+ui -> ui : dataIsConfirmed()
+activate ui
+deactivate ui
+ui -> ctrl** : <<create>>
+
+
+
+
+ui -> ctrl : getVisitRequests(beginDate, endDate)
+activate ctrl
+ctrl -> ctrl : getPropertySaleListFromAgent()
+activate ctrl
+ctrl -> ctrl : getAgentFromSession()
+activate ctrl
+ctrl -> repos : getAuthenticationRepository()
+activate repos
+repos --> ctrl : authenticationRepository
+deactivate repos
+ctrl -> repos : getStoreRepository()
+activate repos
+repos --> ctrl : storeRepository
+deactivate repos
+ctrl -> authRepo : getCurrentUserSession()
+activate authRepo
+authRepo --> ctrl : userSession
+deactivate authRepo
+ctrl -> userSession : getUserId()
+activate userSession
+userSession --> ctrl : userId
+deactivate userSession
+ctrl -> srepo : getAgentDTOFromEmail(userId)
+activate srepo
+srepo --> ctrl : agentDTO
+deactivate srepo
+ctrl --> ctrl : agentDTO
+deactivate ctrl
+ctrl -> repos : getVisitRequestsRepository()
+activate repos
+repos --> ctrl : visitRequestRepository
+deactivate repos
+ctrl -> repo : getVisitRequestListFromAgent(agentDTO)
+activate repo
+repo --> ctrl : visitRequestDTOList
+deactivate repo
+ctrl --> ctrl : visitRequestDTOList
+deactivate ctrl
+ctrl -> repos : getVisitRequestsRepository()
+activate repos
+repos --> ctrl : visitRequestRepository
+deactivate repos
+ctrl -> repo : filterByDate(visitRequestDTOList, beginDate, endDate)
+activate repo
+repo --> ctrl : filteredVisitRequests
+deactivate repo
+ctrl -> ctrl : sortList(filteredVisitRequests)
+activate ctrl
+ctrl -> utils : ReadProperties("Sort.Algorithm")
+activate utils
+utils --> ctrl : sortAlgorithm
+deactivate utils
+alt sortAlgorithm is Bubble
+ctrl -> alg : bubbleSort(filteredVisitRequests)
+activate alg
+deactivate alg
+else sortAlgorithm is Merge
+ctrl -> alg : mergeSort(filteredVisitRequests)
+activate alg
+deactivate alg
+end alt
+
+deactivate ctrl
+ctrl --> ui : visitRequests
+deactivate ctrl
+alt visitRequests is empty
+ui -> ui : showNoVisitRequestsMessage()
+else visitRequests is not empty
+ui -> utils : showVisitRequestsLists(visitRequests, message)
+activate utils
+deactivate utils
+end alt
+ui --> ag : provides list of booking requests for the given period
+
+
+
+
+
+@enduml

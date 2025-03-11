@@ -1,0 +1,135 @@
+@startuml
+class User{
+- String name
+__
++ User(Email, Password, name)
++ getName()  : String
++ hasId(Email) : boolean
++ hasPassword(String password) : boolean
++ addRole(UserRole) : boolean
++ removeRole(UserRole) : boolean
++ hasRole(UserRole) : boolean
++ hasRole(String id) : boolean
++ getRoles() : List<UserRole>
++ changeName(String name) : boolean
++ changeRoles(List<UserRole>) : boolean
++ hashCode() : int
++ equals(Object) : boolean
++ toString() : String
+}
+
+class Password {
+- String Password
+__
++ Password(String password)
+- validate(String password) : boolean
+- createHash(String password) : String
++ checkPassword(String password) : boolean
++ hashCode() : int
++ equals(Object) : bolean
+}
+
+class Email {
+-String email
+__
++ Email(String email)
+- validate(String email) : boolean
+- checkFormat(String Email) : boolean
++ getEmail() : String
++ hashCode() : int
++ equals(Object) : boolean
++ toString() : String
+}
+
+class UserRole {
+- String id
+- String description
+__
+- extractId(String id) : String
++ getId() : String
++ getDescription() : String
++ changeDescription() : boolean
++ hasId(String Id) : boolean
++ hashCode() : int
++ equals(Object) : boolean
++ toString() : String
+}
+
+class UserRoleStore {
+__
++ create(String id, String description) : UserRole
++ add(UserRole) : boolean
++ remove(UserRole) : boolean
++ getAll() : Set<UserRole>
++ getById() : Optional<UserRole>
++ exits(String id) : boolean
++ exists(String role) : boolean
+}
+
+class UserStore {
+__
++ UserStore()
++ create(String name, String email, String password) : User
++ add(User) : boolean
++ remove(User) : boolean
++ getAll() : Set<User>
++ getAllWithRole(String RollId) : Set<User>
++ getById(String email) : Optional<User>
++ getById(Email email) : Optional<User>
++ exists(String email) : boolean
++ exists(Email email) : boolean
++ exits(User) : boolean
+}
+
+class UserSession {
+__
++ UserSession()
++ UserSession(User)
++ doLogout()
++ idLoggedIn() : boolean
++ isLoggedInWithRole(String roleId) : boolean
++ getuserName() : String
++ getUserId() : Email
++ getUserRoles() : List<UserRoleDTO>
+}
+
+class AuthFacade {
+__
++ AuthFacade()
++ addUserRole(Strin id, String Descripption)
++ existsRole(String id) : boolean
++ removeRole(String id) : boolean
++ getUserRoles() : List<UserRoleDTO>
++ getRole(String id) : Optional<UserRoleDTO>
++ changeUserRoleDescription(String id, String Description) : boolean
++ addUser(String name, String email, String password) : boolean
++ addUserWithRole(String name, String Email, String password, String roleId) : boolean
++ addUserWithRoles(String name, String Email, String password, String[] roleId) : boolean
++ existsUser(String Email) : boolean
++ removeUser(String email) : boolean
++ getUsers() : List<UserDTO>
++ getUsersWithRole(StringRole) : List<UserDTO>
++ getUser(String email) : Optional<User>
++ updateUser(UserDTO) : boolean
++ doLogin(String email, String password) : UserSession
++ doLogout()
++ getCurrentUserSession() : UserSession
+}
+
+AuthFacade --> "1" UserSession
+AuthFacade --> "1" UserRoleStore
+AuthFacade --> "1" UserStore
+
+
+User --> "1" Email
+User --> "1" Password
+User --o "0..*" UserRole
+
+UserRoleStore --> "0..*" UserRole
+
+UserStore --> "0..*" User
+
+UserSession --> "0..1" User
+
+
+@enduml
